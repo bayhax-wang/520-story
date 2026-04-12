@@ -8,16 +8,160 @@ function initCanvas(id){
   return{c:c,ctx:ctx,W:r.width,H:r.height};
 }
 
-function drawPerson(ctx,x,y,color,t,walk){
-  ctx.save();ctx.strokeStyle=color;ctx.lineWidth=1.8;ctx.lineCap='round';
-  var b=walk?Math.sin(t*3)*2:0, l=walk?Math.sin(t*4)*4:0;
-  ctx.beginPath();ctx.arc(x,y-20+b,5,0,6.28);ctx.fillStyle=color;ctx.globalAlpha=.9;ctx.fill();
-  ctx.globalAlpha=1;
-  ctx.beginPath();ctx.moveTo(x,y-15+b);ctx.lineTo(x,y-3+b);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(x-7,y-9+b);ctx.lineTo(x+7,y-9+b);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(x,y-3+b);ctx.lineTo(x-4-l,y+6);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(x,y-3+b);ctx.lineTo(x+4+l,y+6);ctx.stroke();
+/* 他：蓝色卫衣少年 */
+function drawBoy(ctx,x,y,t,walk,alpha){
+  var a=alpha||1;
+  ctx.save(); ctx.globalAlpha=a;
+  var b=walk?Math.sin(t*3)*1.5:0;
+  var legL=walk?Math.sin(t*4)*3:0;
+  var armSwing=walk?Math.sin(t*4)*8:0;
+  var headY=y-26+b;
+  // 头发（深蓝短发）
+  ctx.fillStyle='#2a3a6a';
+  ctx.beginPath();ctx.arc(x,headY-1,7.5,Math.PI,0);ctx.fill();
+  // 脸
+  ctx.fillStyle='#fce4c8';
+  ctx.beginPath();ctx.arc(x,headY,6.5,0,6.28);ctx.fill();
+  // 眼睛
+  ctx.fillStyle='#2a2a4a';
+  ctx.beginPath();ctx.arc(x-2.5,headY-.5,1.2,0,6.28);ctx.fill();
+  ctx.beginPath();ctx.arc(x+2.5,headY-.5,1.2,0,6.28);ctx.fill();
+  // 嘴巴（微笑）
+  ctx.strokeStyle='#c49080';ctx.lineWidth=.8;ctx.lineCap='round';
+  ctx.beginPath();ctx.arc(x,headY+2.5,2,.1,Math.PI-.1);ctx.stroke();
+  // 脖子
+  ctx.fillStyle='#fce4c8';ctx.fillRect(x-1.5,headY+6,3,3);
+  // 卫衣身体
+  ctx.fillStyle='#4a6ab5';
+  ctx.beginPath();
+  ctx.moveTo(x-8,headY+9);ctx.lineTo(x+8,headY+9);
+  ctx.lineTo(x+7,headY+24+b);ctx.lineTo(x-7,headY+24+b);ctx.closePath();ctx.fill();
+  // 卫衣帽子轮廓
+  ctx.fillStyle='#4a6ab5';
+  ctx.beginPath();ctx.arc(x,headY-1,8.5,Math.PI+.3,-.3);ctx.lineWidth=2.5;ctx.strokeStyle='#4a6ab5';ctx.stroke();
+  // 卫衣口袋
+  ctx.fillStyle='#3d5a9e';ctx.fillRect(x-5,headY+18+b,10,4);
+  // 手臂
+  ctx.strokeStyle='#4a6ab5';ctx.lineWidth=3;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x-8,headY+12);ctx.lineTo(x-11-armSwing*.3,headY+22+b);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+8,headY+12);ctx.lineTo(x+11+armSwing*.3,headY+22+b);ctx.stroke();
+  // 手（肤色小圆）
+  ctx.fillStyle='#fce4c8';
+  ctx.beginPath();ctx.arc(x-11-armSwing*.3,headY+23+b,2,0,6.28);ctx.fill();
+  ctx.beginPath();ctx.arc(x+11+armSwing*.3,headY+23+b,2,0,6.28);ctx.fill();
+  // 裤子
+  ctx.fillStyle='#2a3050';
+  ctx.beginPath();ctx.moveTo(x-7,headY+24+b);ctx.lineTo(x-6,headY+34+b);ctx.lineTo(x-1,headY+34+b);ctx.lineTo(x,headY+26+b);ctx.closePath();ctx.fill();
+  ctx.beginPath();ctx.moveTo(x+7,headY+24+b);ctx.lineTo(x+6,headY+34+b);ctx.lineTo(x+1,headY+34+b);ctx.lineTo(x,headY+26+b);ctx.closePath();ctx.fill();
+  // 腿部动画
+  ctx.strokeStyle='#2a3050';ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(x-3,headY+33+b);ctx.lineTo(x-4-legL,headY+40);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+3,headY+33+b);ctx.lineTo(x+4+legL,headY+40);ctx.stroke();
+  // 鞋子
+  ctx.fillStyle='#f0f0f0';
+  ctx.beginPath();ctx.ellipse(x-4-legL,headY+41,3.5,2,0,0,6.28);ctx.fill();
+  ctx.beginPath();ctx.ellipse(x+4+legL,headY+41,3.5,2,0,0,6.28);ctx.fill();
   ctx.restore();
+}
+
+/* 她：粉色马尾少女 */
+function drawGirl(ctx,x,y,t,walk,alpha){
+  var a=alpha||1;
+  ctx.save(); ctx.globalAlpha=a;
+  var b=walk?Math.sin(t*3)*1.5:0;
+  var legL=walk?Math.sin(t*4)*2.5:0;
+  var armSwing=walk?Math.sin(t*4)*6:0;
+  var headY=y-26+b;
+  // 头发（深棕长发 + 马尾）
+  ctx.fillStyle='#5a3828';
+  ctx.beginPath();ctx.arc(x,headY,8,0,6.28);ctx.fill();
+  // 马尾辫（右侧飘动）
+  ctx.strokeStyle='#5a3828';ctx.lineWidth=4;ctx.lineCap='round';
+  var tailSwing=Math.sin(t*2)*3;
+  ctx.beginPath();ctx.moveTo(x+5,headY-3);ctx.quadraticCurveTo(x+14+tailSwing,headY+2,x+12+tailSwing,headY+14);ctx.stroke();
+  // 发带
+  ctx.fillStyle='#ff8fab';ctx.beginPath();ctx.arc(x+5,headY-4,2.5,0,6.28);ctx.fill();
+  // 脸
+  ctx.fillStyle='#fce4c8';
+  ctx.beginPath();ctx.arc(x,headY+1,6,0,6.28);ctx.fill();
+  // 刘海
+  ctx.fillStyle='#5a3828';
+  ctx.beginPath();ctx.arc(x,headY-2,7,Math.PI+.5,-.5);ctx.fill();
+  // 腮红
+  ctx.fillStyle='rgba(255,150,150,.3)';
+  ctx.beginPath();ctx.arc(x-4,headY+2.5,2,0,6.28);ctx.fill();
+  ctx.beginPath();ctx.arc(x+4,headY+2.5,2,0,6.28);ctx.fill();
+  // 眼睛（大一点，更可爱）
+  ctx.fillStyle='#2a2a4a';
+  ctx.beginPath();ctx.arc(x-2.5,headY+.5,1.4,0,6.28);ctx.fill();
+  ctx.beginPath();ctx.arc(x+2.5,headY+.5,1.4,0,6.28);ctx.fill();
+  // 眼睛高光
+  ctx.fillStyle='#fff';
+  ctx.beginPath();ctx.arc(x-2,headY+.2,.5,0,6.28);ctx.fill();
+  ctx.beginPath();ctx.arc(x+3,headY+.2,.5,0,6.28);ctx.fill();
+  // 嘴巴
+  ctx.strokeStyle='#d4847a';ctx.lineWidth=.7;ctx.lineCap='round';
+  ctx.beginPath();ctx.arc(x,headY+3.5,1.5,.2,Math.PI-.2);ctx.stroke();
+  // 脖子
+  ctx.fillStyle='#fce4c8';ctx.fillRect(x-1.5,headY+6.5,3,2.5);
+  // 连衣裙上身
+  ctx.fillStyle='#ffb3c6';
+  ctx.beginPath();
+  ctx.moveTo(x-7,headY+9);ctx.lineTo(x+7,headY+9);
+  ctx.lineTo(x+6,headY+18+b);ctx.lineTo(x-6,headY+18+b);ctx.closePath();ctx.fill();
+  // 裙摆（A字型）
+  ctx.fillStyle='#ff9cb8';
+  ctx.beginPath();
+  ctx.moveTo(x-6,headY+18+b);
+  ctx.quadraticCurveTo(x-10,headY+28+b,x-9,headY+30+b);
+  ctx.lineTo(x+9,headY+30+b);
+  ctx.quadraticCurveTo(x+10,headY+28+b,x+6,headY+18+b);
+  ctx.closePath();ctx.fill();
+  // 裙摆花边
+  ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=.8;
+  ctx.beginPath();
+  for(var i=-8;i<=8;i+=3){ctx.moveTo(x+i,headY+30+b);ctx.lineTo(x+i+1.5,headY+32+b);ctx.lineTo(x+i+3,headY+30+b);}
+  ctx.stroke();
+  // 手臂
+  ctx.strokeStyle='#fce4c8';ctx.lineWidth=2.5;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x-7,headY+11);ctx.lineTo(x-10-armSwing*.3,headY+20+b);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+7,headY+11);ctx.lineTo(x+10+armSwing*.3,headY+20+b);ctx.stroke();
+  // 手
+  ctx.fillStyle='#fce4c8';
+  ctx.beginPath();ctx.arc(x-10-armSwing*.3,headY+21+b,1.8,0,6.28);ctx.fill();
+  ctx.beginPath();ctx.arc(x+10+armSwing*.3,headY+21+b,1.8,0,6.28);ctx.fill();
+  // 腿
+  ctx.strokeStyle='#fce4c8';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(x-3,headY+30+b);ctx.lineTo(x-3.5-legL,headY+38);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+3,headY+30+b);ctx.lineTo(x+3.5+legL,headY+38);ctx.stroke();
+  // 小皮鞋
+  ctx.fillStyle='#d45070';
+  ctx.beginPath();ctx.ellipse(x-3.5-legL,headY+39,3,1.8,0,0,6.28);ctx.fill();
+  ctx.beginPath();ctx.ellipse(x+3.5+legL,headY+39,3,1.8,0,0,6.28);ctx.fill();
+  ctx.restore();
+}
+
+/* 路人（灰调简化人物） */
+function drawBystander(ctx,x,y,t,walk,alpha){
+  var a=alpha||.4;
+  ctx.save();ctx.globalAlpha=a;
+  var b=walk?Math.sin(t*3)*1.2:0;
+  var l=walk?Math.sin(t*4)*3:0;
+  var headY=y-22+b;
+  ctx.fillStyle='#8890a8';ctx.beginPath();ctx.arc(x,headY,5,0,6.28);ctx.fill();
+  ctx.strokeStyle='#7880a0';ctx.lineWidth=2;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x,headY+5);ctx.lineTo(x,headY+18+b);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x-6,headY+10);ctx.lineTo(x+6,headY+10);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x,headY+18+b);ctx.lineTo(x-3-l,headY+27);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x,headY+18+b);ctx.lineTo(x+3+l,headY+27);ctx.stroke();
+  ctx.restore();
+}
+
+/* 兼容旧调用 */
+function drawPerson(ctx,x,y,color,t,walk){
+  if(color.indexOf('255,140,180')!==-1) drawGirl(ctx,x,y,t,walk);
+  else if(color.indexOf('100,140,255')!==-1) drawBoy(ctx,x,y,t,walk);
+  else drawBystander(ctx,x,y,t,walk);
 }
 
 function roundRect(ctx,x,y,w,h,r){
@@ -76,8 +220,8 @@ function scenePrimary(){
     ctx.fillStyle='rgba(180,190,230,.65)';ctx.font='11px sans-serif';ctx.textAlign='center';
     ctx.fillText('1 班',W*.255,bY-22);ctx.fillText('2 班',W*.745,bY-22);
     // 小人
-    drawPerson(ctx,W*.255,bY+H*.17,'rgba(100,140,255,.9)',t,false);
-    drawPerson(ctx,W*.745,bY+H*.17,'rgba(255,140,180,.9)',t+1,false);
+    drawBoy(ctx,W*.255,bY+H*.28,t,false);
+    drawGirl(ctx,W*.745,bY+H*.28,t+1,false);
     // 虚线
     ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(100,120,200,.15)';ctx.beginPath();ctx.moveTo(W*.5,bY);ctx.lineTo(W*.5,bY+H*.42);ctx.stroke();ctx.setLineDash([]);
     // 地面
@@ -107,8 +251,8 @@ function sceneMiddle(){
     ctx.fillStyle='rgba(140,150,190,.35)';ctx.font='9px sans-serif';ctx.textAlign='center';ctx.fillText('← 只隔一条街 →',W*.5,gY+25);
     // 小人
     var sx=W*.15+Math.sin(t*.5)*W*.08;
-    drawPerson(ctx,sx,gY-2,'rgba(255,140,180,.7)',t,true);
-    drawPerson(ctx,W*.83,gY-2,'rgba(100,140,255,.5)',t,false);
+    drawGirl(ctx,sx,gY+6,t,true,.7);
+    drawBoy(ctx,W*.83,gY+6,t,false,.5);
     requestAnimationFrame(draw);
   })();
 }
@@ -133,8 +277,8 @@ function sceneHigh(){
     // 公交车
     if(t>2){busX=Math.min(W*.42,busX+1);ctx.fillStyle='rgba(55,75,125,.8)';roundRect(ctx,busX,gY-32,W*.3,26,4);ctx.fill();ctx.fillStyle='rgba(200,220,255,'+(0.3+Math.sin(t)*.1)+')';for(var i=0;i<4;i++)ctx.fillRect(busX+7+i*(W*.065),gY-28,W*.045,11);ctx.fillStyle='rgba(40,40,60,.9)';ctx.beginPath();ctx.arc(busX+W*.06,gY-2,4.5,0,6.28);ctx.fill();ctx.beginPath();ctx.arc(busX+W*.24,gY-2,4.5,0,6.28);ctx.fill();}
     // 小人
-    drawPerson(ctx,W*.2,gY-2,'rgba(100,140,255,.8)',t,false);
-    drawPerson(ctx,W*.42,gY-2,'rgba(255,140,180,.8)',t+.5,false);
+    drawBoy(ctx,W*.2,gY+6,t,false);
+    drawGirl(ctx,W*.42,gY+6,t+.5,false);
     // 省略号
     var da=.2+Math.sin(t*1.5)*.1;ctx.fillStyle='rgba(180,180,210,'+da+')';
     for(var i=0;i<3;i++){ctx.beginPath();ctx.arc(W*.29+i*6,gY-15,1.5,0,6.28);ctx.fill();}
@@ -164,13 +308,13 @@ function sceneMountain(){
     var heX=W*.22+(W*.46-W*.22)*approach;
     var sheX=W*.78-(W*.78-W*.54)*approach;
     var trailY=H*.65;
-    // 路人（灰调，不动太多注意力）
-    drawPerson(ctx,W*.1,trailY+3,'rgba(130,150,190,.4)',t,true);
-    drawPerson(ctx,W*.38,trailY-1,'rgba(140,160,200,.4)',t+2,true);
-    drawPerson(ctx,W*.9,trailY+2,'rgba(130,150,190,.4)',t+4,true);
+    // 路人
+    drawBystander(ctx,W*.1,trailY+8,t,true,.35);
+    drawBystander(ctx,W*.38,trailY+4,t+2,true,.35);
+    drawBystander(ctx,W*.9,trailY+7,t+4,true,.35);
     // 他和她
-    drawPerson(ctx,heX,trailY,'rgba(100,140,255,.9)',t,true);
-    drawPerson(ctx,sheX,trailY,'rgba(255,140,180,.9)',t+1.5,true);
+    drawBoy(ctx,heX,trailY+6,t,true);
+    drawGirl(ctx,sheX,trailY+6,t+1.5,true);
     // 靠近后出现连线光芒
     if(approach>.7){
       var midX=(heX+sheX)/2,a2=(approach-.7)/.3;
