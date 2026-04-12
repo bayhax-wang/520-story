@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>我们的故事</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="starfield"></canvas>
+
+<section class="prologue">
+  <p class="prologue-text">有些人，走了很远的路<br>才发现一直在彼此身边</p>
+  <div class="prologue-hint"><span>向下滑动，开始我们的故事</span><span class="arrow">↓</span></div>
+</section>
+
+<section class="chapter" id="chapter1">
+  <h2 class="chapter-title" data-reveal>第一章</h2>
+  <p class="chapter-subtitle" data-reveal>平行线</p>
+
+  <div class="scene-card" data-reveal data-scene="primary">
+    <div class="scene-animation"><canvas id="cv-primary"></canvas></div>
+    <div class="scene-era">小 学</div>
+    <div class="scene-text">同一所小学，他在1班，她在2班。<span class="aside">他背课文特别厉害，被老师派到她们班做示范。</span><span class="aside">她远远地知道他，但他们不认识。</span></div>
+  </div>
+
+  <div class="scene-card" data-reveal data-scene="middle">
+    <div class="scene-animation"><canvas id="cv-middle"></canvas></div>
+    <div class="scene-era">初 中</div>
+    <div class="scene-text">他成绩好，去了县里二中。她在农村中学。<span class="aside">学校离他家只隔一条街。</span><span class="aside">还是没有联系。</span></div>
+  </div>
+
+  <div class="scene-card" data-reveal data-scene="high">
+    <div class="scene-animation"><canvas id="cv-high"></canvas></div>
+    <div class="scene-era">高 中</div>
+    <div class="scene-text">又同校了。他1班，她10班。<span class="aside">见面会打招呼，放假坐同一趟车回家。</span><span class="aside">但不讲话。</span></div>
+  </div>
+
+  <div class="scene-card converge" data-reveal data-scene="mountain">
+    <div class="scene-animation"><canvas id="cv-mountain"></canvas></div>
+    <div class="scene-era">毕 业 后</div>
+    <div class="scene-text">五个人，一次徒步，一座山。<span class="aside">走了十几年的平行线，终于有了交点。</span><span class="aside">那天，他们加上了好友。</span></div>
+  </div>
+
+  <div class="burst-container" data-reveal>
+    <canvas id="burst-canvas" width="320" height="160"></canvas>
+    <div class="burst-text">从此，不再平行</div>
+  </div>
+
+  <div class="chapter-end" data-reveal>
+    <p class="next-hint">第二章 · 交汇 — 即将揭开</p>
+  </div>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
