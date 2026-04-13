@@ -2,24 +2,28 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>我们的故事</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>我们的故事 · 520</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="start-screen">
-  <div class="start-content">
-    <div class="start-title">我们的故事</div>
-    <div class="start-sub">点击开始播放</div>
-    <div class="start-arrow">▶</div>
+<div id="app"></div>
+<div id="ui-overlay">
+  <div id="start-screen">
+    <div id="start-title">我们的故事</div>
+    <div id="start-subtitle">一段跨越时光的爱情</div>
+    <div id="start-btn">
+      <span class="play-icon">▶</span>
+      <span>点击开始播放</span>
+    </div>
   </div>
-</div>
-<canvas id="main-canvas" style="display:none"></canvas>
-<div id="controls" style="display:none">
+  <div id="scene-label" class="hidden"></div>
+  <div id="pause-indicator" class="hidden">⏸ 已暂停 · 点击继续</div>
   <div id="progress-bar"><div id="progress-fill"></div></div>
-  <div id="scene-title"></div>
 </div>
-<div id="pause-icon">❚❚</div>
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@7/dist/pixi.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
