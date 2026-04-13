@@ -153,6 +153,7 @@ function genLvl(){
   obs=[];items=[];plats=[];
   var sc=SCENES[sIdx];if(!sc)return;
   var d=sc.dist,off=500;
+  /* Generate obstacles first */
   if(sc.obs.length>0){
     var n=Math.floor(d/250);
     for(var i=0;i<n;i++){
@@ -162,10 +163,23 @@ function genLvl(){
       obs.push({x:ox,y:air?gY-CH-65:gY-50,emoji:em,w:50,h:50,hit:false});
     }
   }
+  /* Generate items, ensuring no overlap with obstacles (min 80px gap) */
   var cn=Math.floor(d/280);
   for(var i=0;i<cn;i++){
     var cx=400+i*(d/cn)+(Math.random()*100);
     var cy=gY-55-(Math.random()<0.4?45:0);
+    /* Check distance to all obstacles, nudge if too close */
+    var tries=0;
+    while(tries<5){
+      var tooClose=false;
+      for(var j=0;j<obs.length;j++){
+        var dx=Math.abs(cx-obs[j].x),dy=Math.abs(cy-obs[j].y);
+        if(dx<80&&dy<60){tooClose=true;break;}
+      }
+      if(!tooClose)break;
+      cx+=90+Math.random()*60; /* shift right */
+      tries++;
+    }
     items.push({id:sIdx*1000+i,x:cx,y:cy,emoji:sc.item,w:40,h:40,got:false,ph:Math.random()*6.28});
   }
   var pn=Math.floor(d/650);
@@ -526,21 +540,77 @@ function drScTxt(){
   scTxtAlpha-=0.008;
 }
 
-/* Draw: finale overlay */
+/* Draw: finale overlay — 比心动画 */
 function drFinale(){
   if(finPhase<2)return;
   var cx=W/2,cy=gY-CH;
+  var t=finTimer;
   ctx.save();
-  ctx.font=(30+Math.sin(fN*0.1)*5)+'px serif';
   ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('\uD83D\uDC95',cx,cy-30-Math.sin(fN*0.05)*10);
-  ctx.font='20px serif';
-  for(var i=0;i<6;i++){
-    var a=(i/6)*6.28+fN*0.02;
-    var r=40+Math.sin(fN*0.03+i)*10;
-    ctx.fillText('\u2764\uFE0F',cx+Math.cos(a)*r,cy-20+Math.sin(a)*r);
+
+  /* Arms slowly raise to form heart (0~60 frames) */
+  var armProg=Math.min(1,t/60);
+  var ease=armProg*armProg*(3-2*armProg);
+  var lx=localC.x-camX+CW/2, rx=remoteC.x-camX+CW/2;
+  var midX=(lx+rx)/2, armY=cy-5;
+
+  ctx.strokeStyle='rgba(255,107,157,'+ease+')';
+  ctx.lineWidth=3;ctx.lineCap='round';
+  /* Left arm curve up */
+  ctx.beginPath();
+  ctx.moveTo(lx+8, armY+10);
+  ctx.quadraticCurveTo(lx+8+(midX-lx)*0.5*ease, armY-30*ease, midX, armY-45*ease);
+  ctx.stroke();
+  /* Right arm curve up */
+  ctx.beginPath();
+  ctx.moveTo(rx-8, armY+10);
+  ctx.quadraticCurveTo(rx-8-(rx-midX)*0.5*ease, armY-30*ease, midX, armY-45*ease);
+  ctx.stroke();
+
+  /* Heart grows at the top (after 40 frames) */
+  if(t>40){
+    var hProg=Math.min(1,(t-40)/40);
+    var hEase=hProg*hProg*(3-2*hProg);
+    var hSize=10+25*hEase+Math.sin(fN*0.08)*3;
+    ctx.fillStyle='rgba(255,107,157,'+(0.8+0.2*Math.sin(fN*0.1))+')';
+    drHeart(ctx,midX,armY-45*ease-hSize*0.3,hSize);
+  }
+
+  /* Floating hearts rise (after 80 frames) */
+  if(t>80){
+    var nH=Math.min(12,Math.floor((t-80)/15));
+    ctx.font='20px serif';
+    for(var i=0;i<nH;i++){
+      var age=t-80-i*15;
+      var ha=Math.max(0,1-age/120);
+      ctx.globalAlpha=ha;
+      var hx=midX+Math.sin(i*2.1+fN*0.02)*30;
+      var hy=armY-50-age*0.8;
+      ctx.fillText('\u2764\uFE0F',hx,hy);
+    }
+    ctx.globalAlpha=1;
+  }
+
+  /* Text fades in (after 100 frames) */
+  if(t>100){
+    var tAlpha=Math.min(1,(t-100)/40);
+    ctx.globalAlpha=tAlpha;
+    ctx.fillStyle='#fff';
+    ctx.font='bold 22px sans-serif';
+    ctx.fillText('\u4ece\u6b64\uff0c\u6bcf\u4e00\u5929\u90fd\u662f\u6211\u4eec\u7684\u6545\u4e8b',cx,armY-90-Math.sin(fN*0.04)*5);
+    ctx.globalAlpha=1;
   }
   ctx.restore();
+}
+
+/* Draw heart shape */
+function drHeart(c,x,y,s){
+  c.save();c.translate(x,y);c.beginPath();
+  c.moveTo(0,s*0.3);
+  c.bezierCurveTo(-s*0.5,-s*0.3,-s,-s*0.1,0,-s*0.7);
+  c.moveTo(0,s*0.3);
+  c.bezierCurveTo(s*0.5,-s*0.3,s,-s*0.1,0,-s*0.7);
+  c.fill();c.restore();
 }
 
 /* Ending */
