@@ -372,19 +372,25 @@ var trIdx = 0, trData = null;
 function startTr(from, to, ti) {
   tring = true; trProg = 0; trIdx = ti;
   trData = { f: from, t: to };
-  to.alpha = 0; to.visible = true;
+  from.alpha = 1; from.visible = true; from.scale.set(1);
+  to.alpha = 0; to.visible = true; to.scale.set(1);
 }
 
 function finishTr() {
   if (!trData) return;
   tring = false;
-  trData.f.visible = false; trData.f.alpha = 1; trData.f.scale.set(1);
-  trData.t.alpha = 1; trData.t.scale.set(1);
-  while (trData.t.children.length > 0) {
-    var c = trData.t.children[0];
-    trData.t.removeChild(c);
+  // Clear old scene from sLayer
+  sLayer.removeChildren();
+  // Move new scene children from nLayer to sLayer
+  while (nLayer.children.length > 0) {
+    var c = nLayer.children[0];
+    nLayer.removeChild(c);
     sLayer.addChild(c);
   }
+  sLayer.alpha = 1; sLayer.scale.set(1);
+  sLayer.visible = true;
+  nLayer.alpha = 1; nLayer.scale.set(1);
+  nLayer.visible = true;
   nLayer.removeChildren();
   trData = null;
 }
@@ -566,9 +572,9 @@ pixi.ticker.add(function(delta) {
   if (!started || paused) return;
   var dt = delta / 60;
 
-  if (tring) { updateTr(dt); return; }
-
   scnT += dt; totEl += dt;
+
+  if (tring) { updateTr(dt); return; }
 
   // progress bar
   if (progFill) {
