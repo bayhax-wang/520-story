@@ -14,32 +14,29 @@
   <div class="prologue-hint"><span>向下滑动，开始我们的故事</span><span class="arrow">↓</span></div>
 </section>
 
+<!-- ===== 第一章 ===== -->
 <section class="chapter" id="chapter1">
   <h2 class="chapter-title" data-reveal>第一章</h2>
   <p class="chapter-subtitle" data-reveal>平行线</p>
 
-  <div class="scene-card" data-reveal data-scene="primary">
-    <div class="scene-animation"><canvas id="cv-primary"></canvas></div>
-    <div class="scene-era">小 学</div>
-    <div class="scene-text">同一所小学，他在1班，她在2班。<span class="aside">他背课文特别厉害，被老师派到她们班做示范。</span><span class="aside">她远远地知道他，但他们不认识。</span></div>
+  <div class="scene-full" data-reveal data-scene="primary">
+    <canvas id="cv-primary"></canvas>
+    <div class="scene-label">小学 · 同校不同班</div>
   </div>
 
-  <div class="scene-card" data-reveal data-scene="middle">
-    <div class="scene-animation"><canvas id="cv-middle"></canvas></div>
-    <div class="scene-era">初 中</div>
-    <div class="scene-text">他成绩好，去了县里二中。她在农村中学。<span class="aside">学校离他家只隔一条街。</span><span class="aside">还是没有联系。</span></div>
+  <div class="scene-full" data-reveal data-scene="middle">
+    <canvas id="cv-middle"></canvas>
+    <div class="scene-label">初中 · 一条街的距离</div>
   </div>
 
-  <div class="scene-card" data-reveal data-scene="high">
-    <div class="scene-animation"><canvas id="cv-high"></canvas></div>
-    <div class="scene-era">高 中</div>
-    <div class="scene-text">又同校了。他1班，她10班。<span class="aside">见面会打招呼，放假坐同一趟车回家。</span><span class="aside">但不讲话。</span></div>
+  <div class="scene-full" data-reveal data-scene="high">
+    <canvas id="cv-high"></canvas>
+    <div class="scene-label">高中 · 同一趟车</div>
   </div>
 
-  <div class="scene-card converge" data-reveal data-scene="mountain">
-    <div class="scene-animation"><canvas id="cv-mountain"></canvas></div>
-    <div class="scene-era">毕 业 后</div>
-    <div class="scene-text">五个人，一次徒步，一座山。<span class="aside">走了十几年的平行线，终于有了交点。</span><span class="aside">那天，他们加上了好友。</span></div>
+  <div class="scene-full converge" data-reveal data-scene="mountain">
+    <canvas id="cv-mountain"></canvas>
+    <div class="scene-label warm">毕业后 · 那次徒步</div>
   </div>
 
   <div class="burst-container" data-reveal>
@@ -48,7 +45,7 @@
   </div>
 
   <div class="chapter-end" data-reveal>
-    <p class="next-hint">第二章 · 交汇 — 即将揭开</p>
+    <p class="next-hint">第二章 · 交汇</p>
   </div>
 </section>
 
@@ -57,14 +54,11 @@
   <h2 class="chapter-title" data-reveal>第二章</h2>
   <p class="chapter-subtitle" data-reveal>交汇</p>
 
-  <!-- 暑假群聊 -->
-  <div class="scene-card" data-reveal data-scene="summer">
-    <div class="scene-animation"><canvas id="cv-summer"></canvas></div>
-    <div class="scene-era">那年夏天</div>
-    <div class="scene-text">加了好友之后，五个人建了个小群。<span class="aside">那个暑假，消息一条接一条，好像要把之前十几年没说的话全补上。</span><span class="aside">从群聊，到私聊。</span></div>
+  <div class="scene-full" data-reveal data-scene="summer">
+    <canvas id="cv-summer"></canvas>
+    <div class="scene-label">那年夏天 · 聊不完的话</div>
   </div>
 
-  <!-- 截图占位 -->
   <div class="photo-frame" data-reveal>
     <div class="photo-placeholder" id="photo-hike">
       <div class="photo-icon">⛰️</div>
@@ -73,32 +67,24 @@
     </div>
   </div>
 
-  <!-- 分别 -->
-  <div class="scene-card" data-reveal data-scene="parting">
-    <div class="scene-animation"><canvas id="cv-parting"></canvas></div>
-    <div class="scene-era">九 月</div>
-    <div class="scene-text">暑假结束了。她去上大学，他回去复读。<span class="aside">一个向前走，一个留下来再拼一年。</span></div>
+  <div class="scene-full" data-reveal data-scene="parting">
+    <canvas id="cv-parting"></canvas>
+    <div class="scene-label">九月 · 各奔前程</div>
   </div>
 
-  <!-- 反复措辞 -->
-  <div class="scene-card" data-reveal data-scene="typing">
-    <div class="scene-animation" style="height:260px"><canvas id="cv-typing"></canvas></div>
-    <div class="scene-era">那些发不出去的消息</div>
-    <div class="scene-text">她怀着紧张的心情反复措辞，偶尔发一条短信鼓励他。<span class="aside">打了又删，删了又打。</span><span class="aside">最后发出去的，只有短短一句加油。</span></div>
+  <div class="scene-full tall" data-reveal data-scene="typing">
+    <canvas id="cv-typing"></canvas>
+    <div class="scene-label">那些发不出去的消息</div>
   </div>
 
-  <!-- 等待回复 -->
-  <div class="scene-card" data-reveal data-scene="waiting">
-    <div class="scene-animation"><canvas id="cv-waiting"></canvas></div>
-    <div class="scene-era">等 待</div>
-    <div class="scene-text">他复读很忙，很少回复。<span class="aside">每一条回复都让她开心很久。</span></div>
+  <div class="scene-full" data-reveal data-scene="waiting">
+    <canvas id="cv-waiting"></canvas>
+    <div class="scene-label">等待</div>
   </div>
 
-  <!-- 重逢但克制 -->
-  <div class="scene-card" data-reveal data-scene="reunion">
-    <div class="scene-animation"><canvas id="cv-reunion"></canvas></div>
-    <div class="scene-era">一年后</div>
-    <div class="scene-text">他也上大学了。联系恢复了一些。<span class="aside">但他大一也很忙。</span><span class="aside">两个人之间，好像一直差那么一点点。</span></div>
+  <div class="scene-full" data-reveal data-scene="reunion">
+    <canvas id="cv-reunion"></canvas>
+    <div class="scene-label">一年后 · 他也上大学了</div>
   </div>
 
   <div class="chapter-end" data-reveal>

@@ -1,6 +1,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0a0a1a;color:#e0e0e0;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 #starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* 序章 */
 .prologue{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem}
 .prologue-text{font-size:1.3rem;line-height:2.2;letter-spacing:.15em;color:rgba(200,210,240,0);animation:fadeIn 3s ease forwards .5s;max-width:500px}
 .prologue-hint{position:absolute;bottom:3rem;font-size:.85rem;color:rgba(150,160,200,0);animation:fadeIn 2s ease forwards 4s,bob 2.5s ease-in-out infinite 4s}
@@ -8,47 +10,49 @@ body{background:#0a0a1a;color:#e0e0e0;font-family:'PingFang SC','Hiragino Sans G
 @keyframes fadeIn{to{color:rgba(200,210,240,.9)}}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
 
-.chapter{position:relative;z-index:1;padding:4rem 1.5rem 6rem}
+/* 章节 */
+.chapter{position:relative;z-index:1;padding:3rem 1rem 4rem}
 .chapter-title{text-align:center;font-size:1.6rem;font-weight:300;letter-spacing:.2em;color:rgba(180,190,230,.9);margin-bottom:.8rem;opacity:0;transform:translateY(20px);transition:all 1s ease}
 .chapter-title.visible{opacity:1;transform:translateY(0)}
-.chapter-subtitle{text-align:center;font-size:.95rem;color:rgba(140,150,190,.7);margin-bottom:4rem;opacity:0;transform:translateY(15px);transition:all 1s ease .3s}
+.chapter-subtitle{text-align:center;font-size:.95rem;color:rgba(140,150,190,.7);margin-bottom:3rem;opacity:0;transform:translateY(15px);transition:all 1s ease .3s}
 .chapter-subtitle.visible{opacity:1;transform:translateY(0)}
 
-.scene-card{max-width:420px;margin:0 auto 4rem;opacity:0;transform:translateY(40px);transition:all .9s cubic-bezier(.25,.46,.45,.94)}
-.scene-card.visible{opacity:1;transform:translateY(0)}
-.scene-animation{position:relative;width:100%;height:220px;border-radius:16px;overflow:hidden;margin-bottom:1.2rem;background:rgba(15,15,35,.6);border:1px solid rgba(100,120,200,.15)}
-.scene-card.converge .scene-animation{border-color:rgba(255,180,80,.2);height:260px}
-.scene-animation canvas{width:100%;height:100%}
+/* 全屏场景卡片 */
+.scene-full{position:relative;max-width:460px;margin:0 auto 3rem;border-radius:18px;overflow:hidden;background:rgba(12,12,30,.6);border:1px solid rgba(100,120,200,.12);opacity:0;transform:translateY(35px);transition:all .9s cubic-bezier(.25,.46,.45,.94)}
+.scene-full.visible{opacity:1;transform:translateY(0)}
+.scene-full canvas{display:block;width:100%;height:360px}
+.scene-full.tall canvas{height:420px}
+.scene-full.converge{border-color:rgba(255,180,80,.18)}
 
-.scene-era{display:inline-block;font-size:.75rem;color:rgba(140,160,255,.8);letter-spacing:.12em;font-weight:500;padding:.3rem .8rem;border:1px solid rgba(140,160,255,.25);border-radius:20px;margin-bottom:.8rem}
-.scene-card.converge .scene-era{color:rgba(255,200,120,.9);border-color:rgba(255,180,80,.3)}
+/* 场景底部标签 */
+.scene-label{text-align:center;padding:.7rem .5rem;font-size:.82rem;color:rgba(160,170,210,.55);letter-spacing:.08em;background:rgba(10,10,25,.5)}
+.scene-label.warm{color:rgba(255,200,120,.6)}
 
-.scene-text{font-size:1.05rem;line-height:1.9;color:rgba(200,210,240,.85)}
-.scene-text .aside{display:block;font-size:.88rem;color:rgba(160,170,210,.55);margin-top:.4rem;line-height:1.7}
-
-.burst-container{text-align:center;padding:3rem 0 2rem;opacity:0;transform:scale(.85);transition:all 1.2s cubic-bezier(.25,.46,.45,.94)}
-.burst-container.visible{opacity:1;transform:scale(1)}
-.burst-text{font-size:1.2rem;color:rgba(255,210,140,.9);letter-spacing:.2em;margin-top:1rem}
-
-.chapter-end{text-align:center;padding:4rem 2rem;opacity:0;transition:all 1s ease}
-.chapter-end.visible{opacity:1}
-.chapter-end .next-hint{font-size:.9rem;color:rgba(150,160,200,.5);letter-spacing:.1em}
-
-/* 照片占位 */
-.photo-frame{max-width:420px;margin:0 auto 4rem;opacity:0;transform:translateY(30px);transition:all .9s ease}
+/* 照片 */
+.photo-frame{max-width:460px;margin:0 auto 3rem;opacity:0;transform:translateY(30px);transition:all .9s ease}
 .photo-frame.visible{opacity:1;transform:translateY(0)}
-.photo-placeholder{border:1px dashed rgba(140,160,255,.25);border-radius:16px;padding:2.5rem 1.5rem;text-align:center;background:rgba(15,15,35,.4)}
+.photo-placeholder{border:1px dashed rgba(140,160,255,.2);border-radius:18px;padding:2.5rem 1.5rem;text-align:center;background:rgba(12,12,30,.4)}
 .photo-placeholder .photo-icon{font-size:2rem;margin-bottom:.8rem}
-.photo-placeholder .photo-hint{font-size:.95rem;color:rgba(200,210,240,.7);margin-bottom:.4rem}
-.photo-placeholder .photo-sub{font-size:.8rem;color:rgba(150,160,200,.4)}
-.photo-placeholder img{max-width:100%;border-radius:10px}
+.photo-placeholder .photo-hint{font-size:.92rem;color:rgba(200,210,240,.6);margin-bottom:.3rem}
+.photo-placeholder .photo-sub{font-size:.78rem;color:rgba(150,160,200,.35)}
+.photo-placeholder img{max-width:100%;border-radius:12px}
 
+/* 爆发 */
+.burst-container{text-align:center;padding:2.5rem 0 1.5rem;opacity:0;transform:scale(.85);transition:all 1.2s cubic-bezier(.25,.46,.45,.94)}
+.burst-container.visible{opacity:1;transform:scale(1)}
+.burst-text{font-size:1.2rem;color:rgba(255,210,140,.9);letter-spacing:.2em;margin-top:.8rem}
+
+/* 章尾 */
+.chapter-end{text-align:center;padding:3rem 2rem;opacity:0;transition:all 1s ease}
+.chapter-end.visible{opacity:1}
+.chapter-end .next-hint{font-size:.88rem;color:rgba(150,160,200,.45);letter-spacing:.1em}
+
+/* 流星 */
 .shooting-star{position:fixed;width:100px;height:1px;background:linear-gradient(to right,rgba(180,200,255,.7),transparent);z-index:0;pointer-events:none;opacity:0}
 
 @media(max-width:480px){
   .prologue-text{font-size:1.1rem}
   .chapter-title{font-size:1.3rem}
-  .scene-animation{height:190px}
-  .scene-card.converge .scene-animation{height:230px}
-  .scene-text{font-size:.98rem}
+  .scene-full canvas{height:300px}
+  .scene-full.tall canvas{height:360px}
 }
