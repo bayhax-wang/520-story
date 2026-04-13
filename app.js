@@ -815,7 +815,7 @@ window.addEventListener('resize',function(){
   console.log('%c\n'+
     'class Love {\n'+
     '  constructor() {\n'+
-    '    this.�ersonA = "如月";\n'+
+    '    this.personA = "如月";\n'+
     '    this.personB = "粮哥";\n'+
     '    this.since = new Date("2023-11-09");\n'+
     '    this.status = "married"; // 💍\n'+
@@ -866,7 +866,7 @@ function _eggCheck(){
       '  days = '+d+';\n'+
       '\n'+
       '  while (true) {\n'+
-      '    �ove(粮哥);\n'+
+      '    love(粮哥);\n'+
       '    // no break\n'+
       '    // no exit\n'+
       '    // just us\n'+
