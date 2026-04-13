@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>我们的拼图 🧩 · 520</title>
+<link rel="stylesheet" href="game.css">
+</head>
+<body>
+<!-- ═══ 连接界面 ═══ -->
+<div id="lobby">
+  <div class="lobby-content">
+    <h1 class="lobby-title">我们的拼图 🧩</h1>
+    <p class="lobby-sub">两个人，一起拼完我们的故事</p>
+
+    <div class="lobby-card">
+      <input id="player-name" type="text" placeholder="输入你的名字" maxlength="8" autocomplete="off">
+    </div>
+
+    <div class="lobby-actions">
+      <button id="btn-create" class="btn btn-primary">创建房间</button>
+      <div class="divider"><span>或</span></div>
+      <div class="join-row">
+        <input id="room-input" type="text" placeholder="输入房间码" maxlength="6" autocomplete="off">
+        <button id="btn-join" class="btn btn-secondary">加入</button>
+      </div>
+    </div>
+
+    <div id="room-info" class="hidden">
+      <div class="room-code-display">
+        <span class="room-code-label">房间码</span>
+        <span id="room-code-value" class="room-code-num"></span>
+        <button id="btn-copy" class="btn-icon" title="复制">📋</button>
+      </div>
+      <p class="waiting-text">等待对方加入<span class="dots"></span></p>
+    </div>
+
+    <div id="status-msg" class="hidden"></div>
+  </div>
+
+  <a href="index.html" class="back-link">← 回到故事</a>
+</div>
+
+<!-- ═══ 游戏界面 ═══ -->
+<div id="game" class="hidden">
+  <div id="game-header">
+    <div class="hdr-left">
+      <span id="level-label">第 1 关</span>
+      <span id="scene-caption" class="caption-text"></span>
+    </div>
+    <div class="hdr-right">
+      <span id="progress-count">0 / 16</span>
+      <span id="timer">00:00</span>
+    </div>
+  </div>
+
+  <div id="puzzle-area">
+    <div id="grid-container">
+      <div id="puzzle-grid"></div>
+      <div id="grid-overlay"></div>
+    </div>
+    <div id="ref-image-toggle" title="查看原图">🖼️</div>
+    <div id="ref-image-popup" class="hidden">
+      <img id="ref-image" src="" alt="参考图">
+      <span class="ref-close">✕</span>
+    </div>
+  </div>
+
+  <div id="pieces-tray">
+    <div id="pieces-container"></div>
+  </div>
+</div>
+
+<!-- ═══ 完成庆祝 ═══ -->
+<div id="celebrate" class="hidden">
+  <canvas id="confetti-canvas"></canvas>
+  <div class="celebrate-content">
+    <div id="complete-image-wrap"></div>
+    <p id="complete-caption" class="celebrate-caption"></p>
+    <p id="complete-time" class="celebrate-time"></p>
+    <button id="btn-next" class="btn btn-primary">下一关 →</button>
+    <button id="btn-back-story" class="btn btn-ghost">回到故事</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1/dist/peerjs.min.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
