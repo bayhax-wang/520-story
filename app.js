@@ -246,10 +246,94 @@ var acc=0;
 for(var i=0;i<SCENES.length;i++){sceneStarts.push(acc);acc+=SCENES[i].dur;}
 
 // Background stars (persistent)
-var bgStars=[];
-function initBgStars(W,H){
-  bgStars=[];
-  for(var i=0;i<150;i++) bgStars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.3,a:Math.random()*.6+.2,s:Math.random()*.015+.004,p:Math.random()*6.28});
+// Scene background helper — each scene draws its own bg
+function drawSceneBg(ctx,W,H,id,t){
+  switch(id){
+    case 'prologue':
+      // soft warm gradient (dawn)
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#1a1230');g.addColorStop(.4,'#2d1f4e');g.addColorStop(.7,'#6b3a6e');g.addColorStop(1,'#c47a5a');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      break;
+    case 'primary':
+      // sunny morning — blue sky + warm
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#87CEEB');g.addColorStop(.35,'#B0E0F0');g.addColorStop(.65,'#F0E6D0');g.addColorStop(1,'#E8D5B8');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      // sun
+      ctx.beginPath();ctx.arc(W*.82,H*.12,22,0,6.28);ctx.fillStyle='rgba(255,230,120,.7)';ctx.fill();
+      var sg=ctx.createRadialGradient(W*.82,H*.12,22,W*.82,H*.12,60);sg.addColorStop(0,'rgba(255,230,120,.2)');sg.addColorStop(1,'transparent');ctx.fillStyle=sg;ctx.fillRect(W*.5,0,W*.5,H*.4);
+      // clouds
+      for(var i=0;i<3;i++){var cx=W*(.15+i*.3)+Math.sin(t*.3+i)*8,cy=H*(.08+i*.04);ctx.fillStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.arc(cx,cy,12,0,6.28);ctx.arc(cx+14,cy-3,10,0,6.28);ctx.arc(cx+8,cy-8,9,0,6.28);ctx.fill();}
+      break;
+    case 'middle':
+      // late afternoon — warm orange
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#4a6fa5');g.addColorStop(.4,'#d4956a');g.addColorStop(.7,'#e8b87a');g.addColorStop(1,'#c2956e');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      // setting sun
+      ctx.beginPath();ctx.arc(W*.85,H*.35,18,0,6.28);ctx.fillStyle='rgba(255,160,80,.6)';ctx.fill();
+      break;
+    case 'high':
+      // dusk — purple orange
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#2c2248');g.addColorStop(.3,'#5c3d6e');g.addColorStop(.6,'#c4705a');g.addColorStop(1,'#e8a870');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      break;
+    case 'mountain':
+      // sunrise hike — bright warm
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#fad4a0');g.addColorStop(.25,'#f0a868');g.addColorStop(.5,'#d4e8b0');g.addColorStop(1,'#8cbe78');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      // rising sun
+      ctx.beginPath();ctx.arc(W*.5,H*.18,28,0,6.28);ctx.fillStyle='rgba(255,220,100,.65)';ctx.fill();
+      var rg=ctx.createRadialGradient(W*.5,H*.18,28,W*.5,H*.18,80);rg.addColorStop(0,'rgba(255,220,100,.15)');rg.addColorStop(1,'transparent');ctx.fillStyle=rg;ctx.fillRect(0,0,W,H*.6);
+      break;
+    case 'burst':
+      // warm gold
+      var g=ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,W*.5);
+      g.addColorStop(0,'#fff5e0');g.addColorStop(.5,'#ffd68a');g.addColorStop(1,'#c47a3a');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      break;
+    case 'summer':
+      // summer afternoon — bright
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#5bbce8');g.addColorStop(.5,'#88d4f0');g.addColorStop(1,'#f0e8d0');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      break;
+    case 'parting':
+      // autumn dusk at train station
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#4a3858');g.addColorStop(.35,'#a06048');g.addColorStop(.6,'#d4956a');g.addColorStop(1,'#8a6850');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      break;
+    case 'typing':
+      // late night — dark blue room
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#0c0c20');g.addColorStop(.6,'#141428');g.addColorStop(1,'#1e1a30');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      break;
+    case 'waiting':
+      // quiet evening — soft indigo
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#1a1838');g.addColorStop(.5,'#2a2850');g.addColorStop(1,'#3a3060');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      break;
+    case 'reunion':
+      // night campus — dark blue with city lights
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#0e1028');g.addColorStop(.4,'#1a1e3e');g.addColorStop(1,'#222840');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      // stars (sparse)
+      for(var i=0;i<20;i++){var sx=Math.sin(i*7.3+.5)*W*.45+W*.5,sy=Math.sin(i*3.1+1.2)*H*.2+H*.08;ctx.fillStyle='rgba(200,210,255,'+(0.2+Math.sin(t+i)*.1)+')';ctx.beginPath();ctx.arc(sx,sy,1,0,6.28);ctx.fill();}
+      break;
+    case 'ending':
+      // warm fade
+      var g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#1a1230');g.addColorStop(.5,'#3a2848');g.addColorStop(1,'#5a3860');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      break;
+  }
 }
 
 // State
@@ -266,7 +350,7 @@ function resize(){
   canvas.style.width=W+'px';canvas.style.height=H+'px';
   ctx=canvas.getContext('2d');
   ctx.scale(dpr,dpr);
-  initBgStars(W,H);
+  // no bgStars needed
 }
 
 // Get current scene index + local progress
@@ -304,14 +388,15 @@ function mainLoop(ts){
   if(globalTime>totalDur) globalTime=totalDur-.01;
 
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
 
   var sc=getSceneAt(globalTime);
   var scene=SCENES[sc.idx];
   var localT=sc.local;
   var prog=sc.progress;
 
-  drawStarfield(ctx,W,H,globalTime);
+  // Scene-specific background (replaces starfield)
+  var scene0=SCENES[sc.idx];
+  drawSceneBg(ctx,W,H,scene0.id,globalTime);
 
   var fadeIn=Math.min(1,localT/FADE_DUR);
   var fadeOut=Math.min(1,(scene.dur-localT)/FADE_DUR);
@@ -372,31 +457,29 @@ function drawCenterText(ctx,W,H,text,opts){
 /* ----- 序章 ----- */
 function renderPrologue(ctx,W,H,t,p){
   var a=t<1?t:t>4?5-t:1;
-  drawCenterText(ctx,W,H,'有些人，走了很远的路\n才发现一直在彼此身边',{color:'rgba(200,210,240,'+Math.max(0,a)+')',lineHeight:45});
+  drawCenterText(ctx,W,H,'有些人，走了很远的路\n才发现一直在彼此身边',{color:'rgba(255,240,230,'+Math.max(0,a)+')',lineHeight:45});
 }
 
 /* ----- 小学 ----- */
 function renderPrimary(ctx,W,H,t,p){
   var bY=H*.42;
-  // 夜空（在星空上面再加月亮）
-  ctx.beginPath();ctx.arc(W*.8,H*.15,20,0,6.28);ctx.fillStyle='rgba(255,240,200,.8)';ctx.fill();
-  ctx.beginPath();ctx.arc(W*.8+7,H*.15-4,17,0,6.28);ctx.fillStyle='#000';ctx.fill();
-  // 建筑
-  ctx.fillStyle='rgba(40,40,70,.9)';ctx.fillRect(W*.08,bY,W*.35,H*.42);ctx.fillRect(W*.57,bY,W*.35,H*.42);
-  ctx.fillStyle='rgba(50,50,80,.9)';
+  // 建筑 — warm beige school
+  ctx.fillStyle='#d4c4a8';ctx.fillRect(W*.08,bY,W*.35,H*.42);ctx.fillRect(W*.57,bY,W*.35,H*.42);
+  // rooftops
+  ctx.fillStyle='#b8543a';
   ctx.beginPath();ctx.moveTo(W*.05,bY);ctx.lineTo(W*.255,bY-22);ctx.lineTo(W*.46,bY);ctx.fill();
   ctx.beginPath();ctx.moveTo(W*.54,bY);ctx.lineTo(W*.745,bY-22);ctx.lineTo(W*.95,bY);ctx.fill();
-  // 窗户
-  var wc='rgba(255,220,150,'+(0.5+Math.sin(t*1.5)*.15)+')';ctx.fillStyle=wc;
+  // windows
+  var wc='rgba(135,206,235,'+(0.4+Math.sin(t*1.5)*.15)+')';ctx.fillStyle=wc;
   for(var i=0;i<3;i++){ctx.fillRect(W*.12+i*W*.09,bY+H*.07,W*.055,H*.08);ctx.fillRect(W*.12+i*W*.09,bY+H*.2,W*.055,H*.08);}
   for(var i=0;i<3;i++){ctx.fillRect(W*.61+i*W*.09,bY+H*.07,W*.055,H*.08);ctx.fillRect(W*.61+i*W*.09,bY+H*.2,W*.055,H*.08);}
-  // 标签
-  ctx.fillStyle='rgba(180,190,230,.65)';ctx.font='13px sans-serif';ctx.textAlign='center';
+  // labels
+  ctx.fillStyle='rgba(100,60,30,.7)';ctx.font='13px sans-serif';ctx.textAlign='center';
   ctx.fillText('1 班',W*.255,bY-28);ctx.fillText('2 班',W*.745,bY-28);
-  // 虚线
-  ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(100,120,200,.15)';ctx.beginPath();ctx.moveTo(W*.5,bY);ctx.lineTo(W*.5,bY+H*.42);ctx.stroke();ctx.setLineDash([]);
-  // 地面
-  ctx.fillStyle='rgba(25,28,50,.8)';ctx.fillRect(0,bY+H*.42,W,H);
+  // divider
+  ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(100,80,60,.2)';ctx.beginPath();ctx.moveTo(W*.5,bY);ctx.lineTo(W*.5,bY+H*.42);ctx.stroke();ctx.setLineDash([]);
+  // ground
+  ctx.fillStyle='#c8b898';ctx.fillRect(0,bY+H*.42,W,H);
   // 角色
   drawBoy(ctx,W*.255,bY+H*.3,t,false);
   drawGirl(ctx,W*.745,bY+H*.3,t+1,false);
@@ -410,15 +493,15 @@ function renderPrimary(ctx,W,H,t,p){
 /* ----- 初中 ----- */
 function renderMiddle(ctx,W,H,t,p){
   var gY=H*.65;
-  // 路灯
-  for(var i=0;i<3;i++){var lx=W*.2+i*W*.3;ctx.strokeStyle='rgba(120,120,160,.5)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(lx,gY);ctx.lineTo(lx,gY-40);ctx.stroke();ctx.beginPath();ctx.arc(lx,gY-43,3.5,0,6.28);ctx.fillStyle='rgba(255,230,150,'+(0.5+Math.sin(t*2+i)*.2)+')';ctx.fill();var lg=ctx.createRadialGradient(lx,gY-43,0,lx,gY-43,30);lg.addColorStop(0,'rgba(255,230,150,.08)');lg.addColorStop(1,'transparent');ctx.fillStyle=lg;ctx.fillRect(lx-30,gY-73,60,60);}
-  // 建筑
-  ctx.fillStyle='rgba(40,40,65,.8)';ctx.fillRect(W*.02,gY-55,W*.25,55);
-  ctx.fillStyle='rgba(45,40,65,.8)';ctx.fillRect(W*.73,gY-50,W*.25,50);
-  ctx.fillStyle='rgba(255,220,150,'+(0.4+Math.sin(t*1.3)*.15)+')';ctx.fillRect(W*.78,gY-40,12,14);ctx.fillRect(W*.88,gY-40,12,14);
-  ctx.fillStyle='rgba(180,190,230,.45)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('她的学校',W*.14,gY-60);ctx.fillText('他的家',W*.85,gY-55);
-  // 街道
-  ctx.fillStyle='rgba(50,50,80,.6)';ctx.fillRect(0,gY,W,H*.3);
+  // street lamps (warm)
+  for(var i=0;i<3;i++){var lx=W*.2+i*W*.3;ctx.strokeStyle='rgba(100,80,60,.5)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(lx,gY);ctx.lineTo(lx,gY-40);ctx.stroke();ctx.beginPath();ctx.arc(lx,gY-43,3.5,0,6.28);ctx.fillStyle='rgba(255,200,100,'+(0.6+Math.sin(t*2+i)*.2)+')';ctx.fill();var lg=ctx.createRadialGradient(lx,gY-43,0,lx,gY-43,30);lg.addColorStop(0,'rgba(255,200,100,.12)');lg.addColorStop(1,'transparent');ctx.fillStyle=lg;ctx.fillRect(lx-30,gY-73,60,60);}
+  // buildings
+  ctx.fillStyle='#8a7a65';ctx.fillRect(W*.02,gY-55,W*.25,55);
+  ctx.fillStyle='#907a68';ctx.fillRect(W*.73,gY-50,W*.25,50);
+  ctx.fillStyle='rgba(255,200,100,'+(0.5+Math.sin(t*1.3)*.15)+')';ctx.fillRect(W*.78,gY-40,12,14);ctx.fillRect(W*.88,gY-40,12,14);
+  ctx.fillStyle='rgba(80,50,30,.65)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('她的学校',W*.14,gY-60);ctx.fillText('他的家',W*.85,gY-55);
+  // street
+  ctx.fillStyle='#a09080';ctx.fillRect(0,gY,W,H*.3);
   // 角色
   var sx=W*.15+Math.sin(t*.4)*W*.08;
   drawGirl(ctx,sx,gY+8,t,true,.7);
@@ -433,39 +516,37 @@ function renderMiddle(ctx,W,H,t,p){
 /* ----- 高中 ----- */
 function renderHigh(ctx,W,H,t,p){
   var gY=H*.68;
-  // 黄昏
-  var sg=ctx.createRadialGradient(W*.85,H*.25,10,W*.85,H*.25,W*.4);sg.addColorStop(0,'rgba(255,140,80,.06)');sg.addColorStop(1,'transparent');ctx.fillStyle=sg;ctx.fillRect(0,0,W,H);
-  // 校舍
-  ctx.fillStyle='rgba(30,25,50,.8)';ctx.fillRect(W*.6,gY-60,W*.35,60);ctx.fillRect(W*.65,gY-80,W*.15,20);
-  ctx.fillStyle='rgba(180,170,210,.35)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('高中',W*.77,gY-85);
-  // 车站牌
-  ctx.strokeStyle='rgba(140,130,170,.6)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W*.3,gY);ctx.lineTo(W*.3,gY-48);ctx.stroke();
-  ctx.fillStyle='rgba(60,55,90,.9)';ctx.fillRect(W*.25,gY-54,W*.1,16);ctx.fillStyle='rgba(200,190,230,.6)';ctx.font='9px sans-serif';ctx.fillText('公交站',W*.3,gY-44);
-  // 地面
-  ctx.fillStyle='rgba(35,30,55,.7)';ctx.fillRect(0,gY,W,H*.3);
+  // school building
+  ctx.fillStyle='#8a7060';ctx.fillRect(W*.6,gY-60,W*.35,60);ctx.fillRect(W*.65,gY-80,W*.15,20);
+  ctx.fillStyle='rgba(80,40,30,.6)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('高中',W*.77,gY-85);
+  // windows
+  for(var wi=0;wi<4;wi++){ctx.fillStyle='rgba(255,200,120,'+(0.4+Math.sin(t+wi)*.15)+')';ctx.fillRect(W*.64+wi*W*.07,gY-50,W*.04,12);}
+  // bus stop
+  ctx.strokeStyle='rgba(100,80,60,.6)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W*.3,gY);ctx.lineTo(W*.3,gY-48);ctx.stroke();
+  ctx.fillStyle='#6a5a48';ctx.fillRect(W*.25,gY-54,W*.1,16);ctx.fillStyle='rgba(240,220,180,.8)';ctx.font='9px sans-serif';ctx.fillText('公交站',W*.3,gY-44);
+  // ground
+  ctx.fillStyle='#7a6858';ctx.fillRect(0,gY,W,H*.3);
   // 公交车
   if(t>3){var bx=Math.min(W*.4,-W*.3+(t-3)*W*.12);ctx.fillStyle='rgba(55,75,125,.8)';roundRect(ctx,bx,gY-36,W*.32,30,4);ctx.fill();ctx.fillStyle='rgba(200,220,255,.3)';for(var i=0;i<4;i++)ctx.fillRect(bx+8+i*(W*.07),gY-32,W*.05,13);ctx.fillStyle='rgba(40,40,60,.9)';ctx.beginPath();ctx.arc(bx+W*.07,gY-2,5,0,6.28);ctx.fill();ctx.beginPath();ctx.arc(bx+W*.26,gY-2,5,0,6.28);ctx.fill();}
   // 角色
   drawBoy(ctx,W*.2,gY+8,t,false);
   drawGirl(ctx,W*.42,gY+8,t+.5,false);
   // 气泡
-  if(t>2&&t<5){var a1=Math.min(1,(t-2))*Math.min(1,(5-t));drawBubble(ctx,W*.42,gY-40,'…嗨',{alpha:a1,bg:'rgba(255,180,200,.12)',border:'rgba(255,180,200,.2)',color:'rgba(255,200,220,.8)'});}
-  if(t>4&&t<7){var a2=Math.min(1,(t-4))*Math.min(1,(7-t));drawBubble(ctx,W*.2,gY-40,'…嗯',{alpha:a2,bg:'rgba(120,160,255,.12)',border:'rgba(120,160,255,.2)',color:'rgba(160,190,255,.8)'});}
-  if(t>6){var a3=Math.min(1,(t-6)*.5);drawBubble(ctx,W*.31,gY-65,'打个招呼，坐同一趟车，但不讲话',{thought:true,alpha:a3*.4,bg:'rgba(180,170,220,.08)',border:'rgba(180,170,220,.15)',color:'rgba(180,170,220,.5)'});}
+  if(t>2&&t<5){var a1=Math.min(1,(t-2))*Math.min(1,(5-t));drawBubble(ctx,W*.42,gY-40,'…嗨',{alpha:a1,bg:'rgba(255,230,240,.85)',border:'rgba(200,120,150,.5)',color:'rgba(180,50,90,.9)'});}
+  if(t>4&&t<7){var a2=Math.min(1,(t-4))*Math.min(1,(7-t));drawBubble(ctx,W*.2,gY-40,'…嗯',{alpha:a2,bg:'rgba(220,235,255,.85)',border:'rgba(100,140,200,.5)',color:'rgba(40,70,140,.9)'});}
+  if(t>6){var a3=Math.min(1,(t-6)*.5);drawBubble(ctx,W*.31,gY-65,'打个招呼，坐同一趟车，但不讲话',{thought:true,alpha:a3*.6,bg:'rgba(255,255,255,.75)',border:'rgba(120,100,80,.3)',color:'rgba(80,60,50,.7)'});}
 }
 
 /* ----- 毕业徒步 ----- */
 function renderMountain(ctx,W,H,t,p){
-  // 朝阳
-  var sunY=H*.25;var sg=ctx.createRadialGradient(W*.5,sunY,8,W*.5,sunY,W*.3);sg.addColorStop(0,'rgba(255,180,100,.15)');sg.addColorStop(.5,'rgba(255,140,80,.04)');sg.addColorStop(1,'transparent');ctx.fillStyle=sg;ctx.fillRect(0,0,W,H);
-  // 远山
-  ctx.fillStyle='rgba(30,25,55,.7)';ctx.beginPath();ctx.moveTo(0,H*.5);ctx.quadraticCurveTo(W*.15,H*.25,W*.3,H*.4);ctx.quadraticCurveTo(W*.45,H*.2,W*.6,H*.35);ctx.quadraticCurveTo(W*.75,H*.15,W*.9,H*.33);ctx.lineTo(W,H*.38);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
-  // 近山
-  ctx.fillStyle='rgba(35,30,60,.8)';ctx.beginPath();ctx.moveTo(0,H*.65);ctx.quadraticCurveTo(W*.2,H*.52,W*.4,H*.58);ctx.quadraticCurveTo(W*.6,H*.5,W*.8,H*.56);ctx.lineTo(W,H*.6);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
-  // 小路
-  ctx.strokeStyle='rgba(100,90,140,.25)';ctx.lineWidth=2;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(0,H*.68);ctx.quadraticCurveTo(W*.3,H*.6,W*.5,H*.62);ctx.quadraticCurveTo(W*.75,H*.58,W,H*.63);ctx.stroke();ctx.setLineDash([]);
-  // 树
-  for(var i=0;i<5;i++){var tx=W*(.08+i*.22),ty=H*(.63-Math.sin(i*1.3)*.04);ctx.fillStyle='rgba(40,55,70,.5)';ctx.beginPath();ctx.moveTo(tx,ty);ctx.lineTo(tx-7,ty+13);ctx.lineTo(tx+7,ty+13);ctx.fill();}
+  // far mountains (green)
+  ctx.fillStyle='#6a9a60';ctx.beginPath();ctx.moveTo(0,H*.5);ctx.quadraticCurveTo(W*.15,H*.25,W*.3,H*.4);ctx.quadraticCurveTo(W*.45,H*.2,W*.6,H*.35);ctx.quadraticCurveTo(W*.75,H*.15,W*.9,H*.33);ctx.lineTo(W,H*.38);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
+  // near hills
+  ctx.fillStyle='#4a7a40';ctx.beginPath();ctx.moveTo(0,H*.65);ctx.quadraticCurveTo(W*.2,H*.52,W*.4,H*.58);ctx.quadraticCurveTo(W*.6,H*.5,W*.8,H*.56);ctx.lineTo(W,H*.6);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
+  // trail
+  ctx.strokeStyle='rgba(180,150,100,.4)';ctx.lineWidth=2;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(0,H*.68);ctx.quadraticCurveTo(W*.3,H*.6,W*.5,H*.62);ctx.quadraticCurveTo(W*.75,H*.58,W,H*.63);ctx.stroke();ctx.setLineDash([]);
+  // trees
+  for(var i=0;i<5;i++){var tx=W*(.08+i*.22),ty=H*(.63-Math.sin(i*1.3)*.04);ctx.fillStyle='#3a6830';ctx.beginPath();ctx.moveTo(tx,ty);ctx.lineTo(tx-7,ty+13);ctx.lineTo(tx+7,ty+13);ctx.fill();ctx.fillStyle='#5a3a20';ctx.fillRect(tx-1,ty+12,2,6);}
   // 徒步者靠近
   var approach=Math.min(1,p*1.2);
   var heX=W*.2+(W*.45-W*.2)*approach;
@@ -474,8 +555,8 @@ function renderMountain(ctx,W,H,t,p){
   drawBystander(ctx,W*.08,trY+8,t,true,.3);drawBystander(ctx,W*.36,trY+5,t+2,true,.3);drawBystander(ctx,W*.92,trY+7,t+4,true,.3);
   drawBoy(ctx,heX,trY+8,t,true);drawGirl(ctx,sheX,trY+8,t+1.5,true);
   // 气泡
-  if(approach>.4&&approach<.75){var ba=(approach-.4)/.35*Math.min(1,(.75-approach)/.1);drawBubble(ctx,sheX,trY-35,'这次终于说上话了！',{alpha:ba,bg:'rgba(255,180,200,.12)',border:'rgba(255,180,200,.2)',color:'rgba(255,200,220,.8)'});}
-  if(approach>.6&&approach<.9){var bb=(approach-.6)/.3*Math.min(1,(.9-approach)/.1);drawBubble(ctx,heX,trY-35,'加个微信吧',{alpha:bb,bg:'rgba(120,160,255,.12)',border:'rgba(120,160,255,.2)',color:'rgba(160,190,255,.8)'});}
+  if(approach>.4&&approach<.75){var ba=(approach-.4)/.35*Math.min(1,(.75-approach)/.1);drawBubble(ctx,sheX,trY-35,'这次终于说上话了！',{alpha:ba,bg:'rgba(255,230,240,.85)',border:'rgba(200,120,150,.5)',color:'rgba(180,50,90,.9)'});}
+  if(approach>.6&&approach<.9){var bb=(approach-.6)/.3*Math.min(1,(.9-approach)/.1);drawBubble(ctx,heX,trY-35,'加个微信吧',{alpha:bb,bg:'rgba(220,235,255,.85)',border:'rgba(100,140,200,.5)',color:'rgba(40,70,140,.9)'});}
   // 交汇光芒
   if(approach>.8){var a2=(approach-.8)/.2;var mx=(heX+sheX)/2;var cg=ctx.createRadialGradient(mx,trY-5,0,mx,trY-5,15+a2*15);cg.addColorStop(0,'rgba(255,200,120,'+a2*.4+')');cg.addColorStop(1,'transparent');ctx.fillStyle=cg;ctx.beginPath();ctx.arc(mx,trY-5,15+a2*15,0,6.28);ctx.fill();}
 }
@@ -491,7 +572,7 @@ function renderBurst(ctx,W,H,t,p){
     var life=Math.max(0,1-t/3.5);
     ctx.beginPath();ctx.arc(px,py,bp.r*life,0,6.28);ctx.fillStyle='hsla('+bp.h+',80%,70%,'+life+')';ctx.fill();
   }
-  drawCenterText(ctx,W,H,'从此，不再平行',{color:'rgba(255,210,140,'+(t<.5?t*2:t>3?Math.max(0,(4-t)):1)+')',font:Math.min(W*.07,28)+'px "PingFang SC",sans-serif'});
+  drawCenterText(ctx,W,H,'从此，不再平行',{color:'rgba(140,60,20,'+(t<.5?t*2:t>3?Math.max(0,(4-t)):1)+')',font:Math.min(W*.07,28)+'px "PingFang SC",sans-serif'});
 }
 
 /* ----- 暑假群聊 ----- */
@@ -550,23 +631,21 @@ function renderSummer(ctx,W,H,t,p){
 /* ----- 分别（火车站）----- */
 function renderParting(ctx,W,H,t,p){
   var gY=H*.65;
-  // 傍晚天空补色
-  var eg=ctx.createRadialGradient(W*.3,H*.3,10,W*.3,H*.3,W*.4);eg.addColorStop(0,'rgba(255,120,60,.04)');eg.addColorStop(1,'transparent');ctx.fillStyle=eg;ctx.fillRect(0,0,W,H);
-  // 月台
-  ctx.fillStyle='rgba(50,45,70,.85)';ctx.fillRect(0,gY,W,10);ctx.fillStyle='rgba(220,200,80,.35)';ctx.fillRect(0,gY,W,2);
-  ctx.fillStyle='rgba(40,38,60,.7)';ctx.fillRect(0,gY+10,W,H);
-  // 柱子+灯
-  for(var i=0;i<3;i++){var cx2=W*.15+i*W*.35;ctx.fillStyle='rgba(60,55,80,.7)';ctx.fillRect(cx2-3,gY-50,6,50);ctx.fillStyle='rgba(55,50,75,.6)';ctx.fillRect(cx2-22,gY-54,44,5);ctx.beginPath();ctx.arc(cx2,gY-48,3.5,0,6.28);ctx.fillStyle='rgba(255,230,150,'+(0.4+Math.sin(t*1.5+i)*.15)+')';ctx.fill();}
-  // 铁轨
-  ctx.strokeStyle='rgba(100,95,130,.35)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,gY+16);ctx.lineTo(W,gY+16);ctx.stroke();ctx.beginPath();ctx.moveTo(0,gY+22);ctx.lineTo(W,gY+22);ctx.stroke();
+  // platform
+  ctx.fillStyle='#6a6058';ctx.fillRect(0,gY,W,10);ctx.fillStyle='#c8b840';ctx.fillRect(0,gY,W,2);
+  ctx.fillStyle='#5a5048';ctx.fillRect(0,gY+10,W,H);
+  // pillars + lamps
+  for(var i=0;i<3;i++){var cx2=W*.15+i*W*.35;ctx.fillStyle='#7a7068';ctx.fillRect(cx2-3,gY-50,6,50);ctx.fillStyle='#686058';ctx.fillRect(cx2-22,gY-54,44,5);ctx.beginPath();ctx.arc(cx2,gY-48,3.5,0,6.28);ctx.fillStyle='rgba(255,210,120,'+(0.55+Math.sin(t*1.5+i)*.15)+')';ctx.fill();var lg=ctx.createRadialGradient(cx2,gY-48,2,cx2,gY-48,25);lg.addColorStop(0,'rgba(255,210,120,.1)');lg.addColorStop(1,'transparent');ctx.fillStyle=lg;ctx.fillRect(cx2-25,gY-73,50,50);}
+  // tracks
+  ctx.strokeStyle='rgba(80,70,60,.5)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,gY+16);ctx.lineTo(W,gY+16);ctx.stroke();ctx.beginPath();ctx.moveTo(0,gY+22);ctx.lineTo(W,gY+22);ctx.stroke();
   // 火车
   var trainX=t>2?Math.min(W*.05,-W*.5+(t-2)*W*.15):-W*.6;
-  if(trainX>-W*.5){ctx.fillStyle='rgba(220,225,235,.9)';roundRect(ctx,trainX,gY-30,W*.8,28,4);ctx.fill();ctx.fillStyle='rgba(60,100,180,.7)';ctx.fillRect(trainX,gY-30,W*.8,4);ctx.fillRect(trainX,gY-6,W*.8,4);for(var i=0;i<7;i++){ctx.fillStyle='rgba(180,210,255,.3)';ctx.fillRect(trainX+15+i*W*.1,gY-24,W*.07,14);}}
+  if(trainX>-W*.5){ctx.fillStyle='#e8e8f0';roundRect(ctx,trainX,gY-30,W*.8,28,4);ctx.fill();ctx.fillStyle='#4a6aa0';ctx.fillRect(trainX,gY-30,W*.8,4);ctx.fillRect(trainX,gY-6,W*.8,4);for(var i=0;i<7;i++){ctx.fillStyle='rgba(160,200,240,.5)';ctx.fillRect(trainX+15+i*W*.1,gY-24,W*.07,14);}}
   // 角色
   var spread=Math.min(W*.35,Math.max(0,(t-4)*W*.06));
   if(t<4){drawGirl(ctx,W*.4,gY-2,t,false);drawBoy(ctx,W*.6,gY-2,t,false);
-    if(t>1){var ba=Math.min(1,(t-1));drawBubble(ctx,W*.4,gY-48,'我要去上大学了…',{alpha:ba*.7,bg:'rgba(255,180,200,.1)',border:'rgba(255,180,200,.2)',color:'rgba(255,200,220,.7)'});}
-    if(t>2.5){var bb=Math.min(1,(t-2.5));drawBubble(ctx,W*.6,gY-48,'我留下来复读',{alpha:bb*.7,bg:'rgba(120,160,255,.1)',border:'rgba(120,160,255,.2)',color:'rgba(160,190,255,.7)'});}
+    if(t>1){var ba=Math.min(1,(t-1));drawBubble(ctx,W*.4,gY-48,'我要去上大学了…',{alpha:ba*.85,bg:'rgba(255,230,240,.85)',border:'rgba(200,120,150,.5)',color:'rgba(180,50,90,.9)'});}
+    if(t>2.5){var bb=Math.min(1,(t-2.5));drawBubble(ctx,W*.6,gY-48,'我留下来复读',{alpha:bb*.85,bg:'rgba(220,235,255,.85)',border:'rgba(100,140,200,.5)',color:'rgba(40,70,140,.9)'});}
   }else{drawGirl(ctx,W*.4-spread,gY-2,t,true);drawBoy(ctx,W*.6+spread,gY-2,t,true);}
   // 落叶
   for(var i=0;i<6;i++){var lx=(W*.05+i*W*.18+t*12+i*30)%(W*1.1);var ly=H*.1+Math.sin(t*.8+i*2.3)*H*.2+i*10;ctx.save();ctx.translate(lx,ly);ctx.rotate(t*.5+i*1.2);ctx.fillStyle='rgba(200,140,60,'+(0.12+Math.sin(t+i)*.06)+')';ctx.beginPath();ctx.moveTo(0,-3);ctx.quadraticCurveTo(4,0,0,4);ctx.quadraticCurveTo(-4,0,0,-3);ctx.fill();ctx.restore();}
@@ -651,16 +730,16 @@ function renderWaiting(ctx,W,H,t,p){
 /* ----- 一年后 ----- */
 function renderReunion(ctx,W,H,t,p){
   var gY=H*.62;
-  // 左大学
-  ctx.fillStyle='rgba(35,32,55,.85)';ctx.fillRect(W*.02,gY-60,W*.22,60);ctx.fillRect(W*.08,gY-78,W*.12,18);
-  for(var r=0;r<2;r++)for(var c=0;c<3;c++){ctx.fillStyle='rgba(255,220,150,'+(0.25+Math.sin(t*1.2+r+c)*.1)+')';ctx.fillRect(W*.04+c*W*.06,gY-52+r*24,6,10);}
-  ctx.fillStyle='rgba(160,155,200,.4)';ctx.font='8px sans-serif';ctx.textAlign='center';ctx.fillText('她的大学',W*.15,gY-82);
-  // 右大学
-  ctx.fillStyle='rgba(35,32,55,.85)';ctx.fillRect(W*.76,gY-60,W*.22,60);ctx.fillRect(W*.8,gY-78,W*.12,18);
-  for(var r=0;r<2;r++)for(var c=0;c<3;c++){ctx.fillStyle='rgba(255,220,150,'+(0.25+Math.sin(t*1.5+r+c+2)*.1)+')';ctx.fillRect(W*.78+c*W*.06,gY-52+r*24,6,10);}
-  ctx.fillStyle='rgba(160,155,200,.4)';ctx.font='8px sans-serif';ctx.fillText('他的大学',W*.87,gY-82);
-  // 地面
-  ctx.fillStyle='rgba(25,25,45,.7)';ctx.fillRect(0,gY,W,H*.38);
+  // left campus
+  ctx.fillStyle='#3a3858';ctx.fillRect(W*.02,gY-60,W*.22,60);ctx.fillRect(W*.08,gY-78,W*.12,18);
+  for(var r=0;r<2;r++)for(var c=0;c<3;c++){ctx.fillStyle='rgba(255,210,120,'+(0.4+Math.sin(t*1.2+r+c)*.15)+')';ctx.fillRect(W*.04+c*W*.06,gY-52+r*24,6,10);}
+  ctx.fillStyle='rgba(180,190,220,.55)';ctx.font='8px sans-serif';ctx.textAlign='center';ctx.fillText('她的大学',W*.15,gY-82);
+  // right campus
+  ctx.fillStyle='#3a3858';ctx.fillRect(W*.76,gY-60,W*.22,60);ctx.fillRect(W*.8,gY-78,W*.12,18);
+  for(var r=0;r<2;r++)for(var c=0;c<3;c++){ctx.fillStyle='rgba(255,210,120,'+(0.4+Math.sin(t*1.5+r+c+2)*.15)+')';ctx.fillRect(W*.78+c*W*.06,gY-52+r*24,6,10);}
+  ctx.fillStyle='rgba(180,190,220,.55)';ctx.font='8px sans-serif';ctx.fillText('他的大学',W*.87,gY-82);
+  // ground
+  ctx.fillStyle='#2a2840';ctx.fillRect(0,gY,W,H*.38);
   // 人物
   drawGirl(ctx,W*.16,gY+8,t,false);drawBoy(ctx,W*.84,gY+8,t,false);
   // 虚线纽带
@@ -669,12 +748,12 @@ function renderReunion(ctx,W,H,t,p){
   // 脉搏光点
   var pulseX=W*.5+Math.sin(t*.6)*W*.15;ctx.beginPath();ctx.arc(pulseX,gY-14,3,0,6.28);ctx.fillStyle='rgba(255,180,200,'+(0.12+Math.sin(t*2)*.08)+')';ctx.fill();
   // 文字
-  if(t>3){var ta=Math.min(1,(t-3)*.5);ctx.fillStyle='rgba(180,170,215,'+ta*.2+')';ctx.font='italic 11px sans-serif';ctx.textAlign='center';ctx.fillText('好像差了那么一点点',W*.5,gY+H*.2);}
+  if(t>3){var ta=Math.min(1,(t-3)*.5);ctx.fillStyle='rgba(180,190,220,'+ta*.5+')';ctx.font='italic 11px sans-serif';ctx.textAlign='center';ctx.fillText('好像差了那么一点点',W*.5,gY+H*.2);}
 }
 
 /* ----- 结尾 ----- */
 function renderEnding(ctx,W,H,t,p){
   var a=t<1?t:t>4?Math.max(0,5-t):1;
-  drawCenterText(ctx,W,H,'第三章\n心照不宣\n\n即将揭开',{color:'rgba(200,210,240,'+a+')',lineHeight:38,font:Math.min(W*.05,22)+'px "PingFang SC",sans-serif'});
+  drawCenterText(ctx,W,H,'第三章\n心照不宣\n\n即将揭开',{color:'rgba(255,240,230,'+a+')',lineHeight:38,font:Math.min(W*.05,22)+'px "PingFang SC",sans-serif'});
 }
 
