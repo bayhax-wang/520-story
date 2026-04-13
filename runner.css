@@ -1,0 +1,80 @@
+/* ═══ runner.css — 520 Love Runner ═══ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:#0a0a1a;color:#fff;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none}
+
+/* ─── Lobby ─── */
+#lobby{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);z-index:100}
+.lobby-content{max-width:400px;width:90%;text-align:center}
+.lobby-title{font-size:2.2rem;margin-bottom:.3rem;text-shadow:0 0 20px rgba(255,100,150,.4)}
+.lobby-sub{color:rgba(255,255,255,.6);margin-bottom:1.8rem;font-size:.95rem}
+
+/* role pick */
+.lobby-card{margin-bottom:1.5rem}
+.role-pick{display:flex;gap:1rem;justify-content:center}
+.role-btn{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:1rem 1.5rem;border-radius:16px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#fff;font-size:1rem;cursor:pointer;transition:all .2s}
+.role-btn.active{border-color:#ff6b9d;background:rgba(255,107,157,.12);box-shadow:0 0 20px rgba(255,107,157,.2)}
+.role-avatar{display:block;width:40px;height:40px;border-radius:8px}
+.role-blue{background:linear-gradient(135deg,#4a9eff,#2d7dd2)}
+.role-pink{background:linear-gradient(135deg,#ff6b9d,#e84393)}
+
+/* actions */
+.lobby-actions{display:flex;flex-direction:column;gap:.8rem;align-items:center}
+.btn{padding:.8rem 2rem;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s;min-width:200px}
+.btn-primary{background:linear-gradient(135deg,#ff6b9d,#e84393);color:#fff;box-shadow:0 4px 20px rgba(255,107,157,.3)}
+.btn-primary:active{transform:scale(.96)}
+.btn-secondary{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.btn-ghost{background:transparent;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.15);min-width:200px;padding:.7rem 2rem;border-radius:12px;font-size:.9rem;cursor:pointer;text-decoration:none;display:inline-block;text-align:center;transition:all .2s}
+.btn-ghost:hover{border-color:rgba(255,255,255,.4);color:#fff}
+.divider{display:flex;align-items:center;gap:.8rem;width:100%;color:rgba(255,255,255,.3);font-size:.85rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.1)}
+.join-row{display:flex;gap:.5rem;width:100%}
+.join-row input{flex:1;padding:.7rem 1rem;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;text-align:center;letter-spacing:.2em;outline:none}
+.join-row input:focus{border-color:#ff6b9d}
+.join-row .btn{min-width:auto;padding:.7rem 1.2rem}
+
+/* room info */
+#room-info{margin-top:1rem}
+.room-code-display{display:flex;align-items:center;justify-content:center;gap:.8rem;margin-bottom:.5rem}
+.room-code-label{font-size:.8rem;color:rgba(255,255,255,.5)}
+.room-code-num{font-size:2rem;font-weight:700;letter-spacing:.15em;color:#ff6b9d}
+.btn-icon{background:none;border:none;font-size:1.2rem;cursor:pointer}
+.waiting-text{color:rgba(255,255,255,.5);font-size:.85rem}
+.dots::after{content:'';animation:dots 1.5s steps(4,end) infinite}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+
+#status-msg{margin-top:1rem;padding:.6rem 1rem;border-radius:8px;font-size:.85rem}
+#status-msg.error{background:rgba(255,50,50,.15);color:#ff6b6b}
+#status-msg.ok{background:rgba(50,255,100,.15);color:#6bffb0}
+
+.lobby-footer{position:fixed;bottom:2rem;display:flex;gap:2rem}
+.back-link{color:rgba(255,255,255,.4);text-decoration:none;font-size:.85rem;transition:color .2s}
+.back-link:hover{color:#fff}
+
+.hidden{display:none!important}
+
+/* ─── Game ─── */
+#game-container{position:fixed;inset:0;background:#000}
+#game-canvas{display:block;width:100%;height:100%}
+
+#hud{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;pointer-events:none;z-index:10}
+#hud>div{pointer-events:auto}
+#hud-left{font-size:.85rem;opacity:.9}
+#hud-center{font-size:1.1rem;font-weight:700}
+#hud-right{width:120px}
+#progress-track{height:6px;border-radius:3px;background:rgba(255,255,255,.15);overflow:hidden}
+#progress-fill{height:100%;width:0%;border-radius:3px;background:linear-gradient(90deg,#ff6b9d,#e84393);transition:width .3s}
+
+#touch-zone{position:fixed;inset:0;z-index:5}
+#scene-name{background:rgba(0,0,0,.3);padding:2px 10px;border-radius:8px}
+
+/* ─── Ending ─── */
+#ending{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200}
+#ending-canvas{position:absolute;inset:0;z-index:0}
+.ending-content{position:relative;z-index:1;text-align:center}
+.ending-title{font-size:2.5rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(255,100,150,.5)}
+.ending-sub{color:rgba(255,255,255,.7);margin-bottom:1rem;font-size:1rem}
+.ending-score{font-size:1.3rem;margin-bottom:1.5rem}
+.ending-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* ─── Scene transition overlay ─── */
+#scene-transition{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0;transition:opacity .5s}

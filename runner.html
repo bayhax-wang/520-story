@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>一起跑酷 🏃 · 520</title>
+<link rel="stylesheet" href="runner.css">
+</head>
+<body>
+<!-- ═══ 连接界面 ═══ -->
+<div id="lobby">
+  <div class="lobby-content">
+    <h1 class="lobby-title">一起跑酷 🏃</h1>
+    <p class="lobby-sub">在爱情的时间线上，一路向前</p>
+
+    <div class="lobby-card">
+      <div class="role-pick">
+        <button id="pick-liang" class="role-btn active" data-role="liang">
+          <span class="role-avatar role-blue"></span>
+          <span>粮哥</span>
+        </button>
+        <button id="pick-ruyue" class="role-btn" data-role="ruyue">
+          <span class="role-avatar role-pink"></span>
+          <span>如月</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="lobby-actions">
+      <button id="btn-create" class="btn btn-primary">创建房间</button>
+      <div class="divider"><span>或</span></div>
+      <div class="join-row">
+        <input id="room-input" type="text" placeholder="输入房间码" maxlength="6" autocomplete="off">
+        <button id="btn-join" class="btn btn-secondary">加入</button>
+      </div>
+      <button id="btn-solo" class="btn btn-ghost">单人模式 🤖</button>
+    </div>
+
+    <div id="room-info" class="hidden">
+      <div class="room-code-display">
+        <span class="room-code-label">房间码</span>
+        <span id="room-code-value" class="room-code-num"></span>
+        <button id="btn-copy" class="btn-icon" title="复制">📋</button>
+      </div>
+      <p class="waiting-text">等待对方加入<span class="dots"></span></p>
+    </div>
+
+    <div id="status-msg" class="hidden"></div>
+  </div>
+
+  <div class="lobby-footer">
+    <a href="index.html" class="back-link">← 回到故事</a>
+    <a href="game.html" class="back-link">🧩 拼图</a>
+  </div>
+</div>
+
+<!-- ═══ 游戏画布 ═══ -->
+<div id="game-container" class="hidden">
+  <canvas id="game-canvas"></canvas>
+  <div id="hud">
+    <div id="hud-left">
+      <span id="scene-name">小学</span>
+    </div>
+    <div id="hud-center">
+      <span id="score-display">❤️ × 0</span>
+    </div>
+    <div id="hud-right">
+      <div id="progress-track"><div id="progress-fill"></div></div>
+    </div>
+  </div>
+  <div id="touch-zone"></div>
+</div>
+
+<!-- ═══ 结局画面 ═══ -->
+<div id="ending" class="hidden">
+  <canvas id="ending-canvas"></canvas>
+  <div class="ending-content">
+    <h1 class="ending-title">我们在一起了 💕</h1>
+    <p class="ending-sub">一路走来，感谢有你</p>
+    <p id="ending-score" class="ending-score"></p>
+    <div class="ending-actions">
+      <button id="btn-replay" class="btn btn-primary">再跑一次</button>
+      <a href="index.html" class="btn btn-ghost">回到故事</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1/dist/peerjs.min.js"></script>
+<script src="runner.js"></script>
+</body>
+</html>

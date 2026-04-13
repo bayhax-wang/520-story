@@ -778,7 +778,7 @@ pixi.ticker.add(function(delta){
       goScene(curIdx+1);
     }else{
       paused=true;
-      pauseInd.innerHTML='\u2728 故事结束 \u00b7 520快乐 \u2764\ufe0f<br><br><a href="game.html" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#ff6b9d,#ff9cc2);color:#fff;border-radius:12px;text-decoration:none;font-size:16px;font-weight:600;box-shadow:0 4px 20px rgba(255,107,157,0.3);animation:pulse 2s infinite">\ud83e\udde9 一起拼图</a>';
+      pauseInd.innerHTML='\u2728 故事结束 \u00b7 520快乐 \u2764\ufe0f<br><br><a href="game.html" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#ff6b9d,#ff9cc2);color:#fff;border-radius:12px;text-decoration:none;font-size:16px;font-weight:600;box-shadow:0 4px 20px rgba(255,107,157,0.3);animation:pulse 2s infinite">\ud83e\udde9 一起拼图</a><br><br><a href="runner.html" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#4a9eff,#2d7dd2);color:#fff;border-radius:12px;text-decoration:none;font-size:16px;font-weight:600;box-shadow:0 4px 20px rgba(74,158,255,0.3);animation:pulse 2s infinite">\ud83c\udfc3 一起跑酷</a>';
       pauseInd.classList.remove('hidden');
     }
   }
