@@ -14,30 +14,40 @@ function roundRect(ctx,x,y,w,h,r){
 
 function drawBubble(ctx,x,y,text,opts){
   opts=opts||{};
-  var font=opts.font||'10px sans-serif';
-  var color=opts.color||'rgba(255,255,255,.9)';
-  var bg=opts.bg||'rgba(255,255,255,.12)';
-  var border=opts.border||'rgba(255,255,255,.2)';
+  var fs=Math.max(13,Math.min(W*.038,18));
+  var font=opts.font||(fs+'px "PingFang SC",sans-serif');
+  var color=opts.color||'rgba(60,40,30,.9)';
+  var bg=opts.bg||'rgba(255,255,255,.88)';
+  var border=opts.border||'rgba(160,120,80,.4)';
   var thought=opts.thought||false;
   var alpha=opts.alpha===undefined?1:opts.alpha;
   ctx.save();ctx.globalAlpha*=alpha;
   ctx.font=font;var tw=ctx.measureText(text).width;
-  var pw=tw+16,ph=20,px=x-pw/2,py=y-ph;
+  var pw=tw+20,ph=fs+12,px=x-pw/2,py=y-ph;
+  // shadow
+  ctx.shadowColor='rgba(0,0,0,.15)';ctx.shadowBlur=8;ctx.shadowOffsetY=2;
   if(thought){
-    ctx.setLineDash([3,3]);ctx.strokeStyle=border;ctx.lineWidth=.8;
-    roundRect(ctx,px,py,pw,ph,10);ctx.fillStyle=bg;ctx.fill();ctx.stroke();ctx.setLineDash([]);
+    ctx.setLineDash([4,4]);ctx.strokeStyle=border;ctx.lineWidth=1;
+    roundRect(ctx,px,py,pw,ph,ph/2);ctx.fillStyle=bg;ctx.fill();ctx.stroke();ctx.setLineDash([]);
+    ctx.shadowBlur=0;
     ctx.fillStyle=bg;
-    ctx.beginPath();ctx.arc(x-3,y+2,2,0,6.28);ctx.fill();
-    ctx.beginPath();ctx.arc(x-1,y+6,1.2,0,6.28);ctx.fill();
+    ctx.beginPath();ctx.arc(x-4,y+3,3,0,6.28);ctx.fill();
+    ctx.beginPath();ctx.arc(x-1,y+8,2,0,6.28);ctx.fill();
   }else{
-    roundRect(ctx,px,py,pw,ph,10);ctx.fillStyle=bg;ctx.fill();
-    ctx.strokeStyle=border;ctx.lineWidth=.6;ctx.stroke();
+    roundRect(ctx,px,py,pw,ph,ph/2);ctx.fillStyle=bg;ctx.fill();
+    ctx.strokeStyle=border;ctx.lineWidth=.8;ctx.stroke();
+    ctx.shadowBlur=0;
     ctx.fillStyle=bg;
-    ctx.beginPath();ctx.moveTo(x-3,y);ctx.lineTo(x,y+5);ctx.lineTo(x+3,y);ctx.fill();
+    ctx.beginPath();ctx.moveTo(x-4,y);ctx.lineTo(x,y+7);ctx.lineTo(x+4,y);ctx.fill();
   }
-  ctx.fillStyle=color;ctx.textAlign='center';ctx.fillText(text,x,py+13.5);
+  ctx.shadowBlur=0;ctx.shadowColor='transparent';
+  ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,py+ph/2);
   ctx.restore();
 }
+
+/* ---------- Responsive font helper ---------- */
+function sf(base){ return Math.max(base, Math.min(W*base/375, base*2.2)); }
+// sf(12) on 375px screen = 12px, on 750px = 24px, capped at 26px
 
 /* ---------- Characters ---------- */
 
@@ -426,10 +436,24 @@ function togglePause(){
 
 // Init
 window.addEventListener('resize',resize);
-resize();
+
+function startAnimation(){
+  var ss=document.getElementById('start-screen');
+  if(ss) ss.style.display='none';
+  document.getElementById('main-canvas').style.display='block';
+  document.getElementById('controls').style.display='block';
+  resize();
+  requestAnimationFrame(mainLoop);
+}
+
+// Start screen click
+var ss=document.getElementById('start-screen');
+if(ss){
+  ss.addEventListener('click',startAnimation);
+  ss.addEventListener('touchend',function(e){e.preventDefault();startAnimation();});
+}
 document.getElementById('main-canvas').addEventListener('click',togglePause);
 document.getElementById('main-canvas').addEventListener('touchend',function(e){e.preventDefault();togglePause();});
-requestAnimationFrame(mainLoop);
 
 /* ============================================================
    SCENE RENDER FUNCTIONS
@@ -442,15 +466,19 @@ requestAnimationFrame(mainLoop);
 function drawCenterText(ctx,W,H,text,opts){
   opts=opts||{};
   ctx.save();
-  ctx.fillStyle=opts.color||'rgba(200,210,240,.9)';
-  ctx.font=opts.font||(Math.min(W*.06,24)+'px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif');
+  var defSize=Math.max(18,Math.min(W*.065,32));
+  ctx.fillStyle=opts.color||'rgba(255,240,230,.9)';
+  ctx.font=opts.font||(defSize+'px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif');
   ctx.textAlign='center';ctx.textBaseline='middle';
+  // text shadow for readability
+  ctx.shadowColor='rgba(0,0,0,.3)';ctx.shadowBlur=6;ctx.shadowOffsetY=2;
   var lines=text.split('\n');
-  var lh=opts.lineHeight||40;
+  var lh=opts.lineHeight||Math.max(36,defSize*1.8);
   var startY=H/2-(lines.length-1)*lh/2;
   for(var i=0;i<lines.length;i++){
     ctx.fillText(lines[i],W/2,startY+i*lh);
   }
+  ctx.shadowBlur=0;ctx.shadowColor='transparent';
   ctx.restore();
 }
 
@@ -474,7 +502,7 @@ function renderPrimary(ctx,W,H,t,p){
   for(var i=0;i<3;i++){ctx.fillRect(W*.12+i*W*.09,bY+H*.07,W*.055,H*.08);ctx.fillRect(W*.12+i*W*.09,bY+H*.2,W*.055,H*.08);}
   for(var i=0;i<3;i++){ctx.fillRect(W*.61+i*W*.09,bY+H*.07,W*.055,H*.08);ctx.fillRect(W*.61+i*W*.09,bY+H*.2,W*.055,H*.08);}
   // labels
-  ctx.fillStyle='rgba(100,60,30,.7)';ctx.font='13px sans-serif';ctx.textAlign='center';
+  ctx.fillStyle='rgba(100,60,30,.7)';ctx.font=sf(15)+'px sans-serif';ctx.textAlign='center';
   ctx.fillText('1 班',W*.255,bY-28);ctx.fillText('2 班',W*.745,bY-28);
   // divider
   ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(100,80,60,.2)';ctx.beginPath();ctx.moveTo(W*.5,bY);ctx.lineTo(W*.5,bY+H*.42);ctx.stroke();ctx.setLineDash([]);
@@ -499,7 +527,7 @@ function renderMiddle(ctx,W,H,t,p){
   ctx.fillStyle='#8a7a65';ctx.fillRect(W*.02,gY-55,W*.25,55);
   ctx.fillStyle='#907a68';ctx.fillRect(W*.73,gY-50,W*.25,50);
   ctx.fillStyle='rgba(255,200,100,'+(0.5+Math.sin(t*1.3)*.15)+')';ctx.fillRect(W*.78,gY-40,12,14);ctx.fillRect(W*.88,gY-40,12,14);
-  ctx.fillStyle='rgba(80,50,30,.65)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('她的学校',W*.14,gY-60);ctx.fillText('他的家',W*.85,gY-55);
+  ctx.fillStyle='rgba(80,50,30,.65)';ctx.font=sf(13)+'px sans-serif';ctx.textAlign='center';ctx.fillText('她的学校',W*.14,gY-60);ctx.fillText('他的家',W*.85,gY-55);
   // street
   ctx.fillStyle='#a09080';ctx.fillRect(0,gY,W,H*.3);
   // 角色
@@ -518,12 +546,12 @@ function renderHigh(ctx,W,H,t,p){
   var gY=H*.68;
   // school building
   ctx.fillStyle='#8a7060';ctx.fillRect(W*.6,gY-60,W*.35,60);ctx.fillRect(W*.65,gY-80,W*.15,20);
-  ctx.fillStyle='rgba(80,40,30,.6)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('高中',W*.77,gY-85);
+  ctx.fillStyle='rgba(80,40,30,.6)';ctx.font=sf(13)+'px sans-serif';ctx.textAlign='center';ctx.fillText('高中',W*.77,gY-85);
   // windows
   for(var wi=0;wi<4;wi++){ctx.fillStyle='rgba(255,200,120,'+(0.4+Math.sin(t+wi)*.15)+')';ctx.fillRect(W*.64+wi*W*.07,gY-50,W*.04,12);}
   // bus stop
   ctx.strokeStyle='rgba(100,80,60,.6)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W*.3,gY);ctx.lineTo(W*.3,gY-48);ctx.stroke();
-  ctx.fillStyle='#6a5a48';ctx.fillRect(W*.25,gY-54,W*.1,16);ctx.fillStyle='rgba(240,220,180,.8)';ctx.font='9px sans-serif';ctx.fillText('公交站',W*.3,gY-44);
+  ctx.fillStyle='#6a5a48';ctx.fillRect(W*.25,gY-54,W*.1,16);ctx.fillStyle='rgba(240,220,180,.8)';ctx.font=sf(12)+'px sans-serif';ctx.fillText('公交站',W*.3,gY-44);
   // ground
   ctx.fillStyle='#7a6858';ctx.fillRect(0,gY,W,H*.3);
   // 公交车
@@ -594,10 +622,10 @@ function renderSummer(ctx,W,H,t,p){
   roundRect(ctx,px-4,py-4,pw+8,ph+8,20);ctx.fillStyle='#222230';ctx.fill();
   roundRect(ctx,px,py,pw,ph,16);ctx.fillStyle='#0c0c16';ctx.fill();
   // 状态栏
-  ctx.fillStyle='rgba(200,200,220,.35)';ctx.font='9px sans-serif';ctx.textAlign='left';ctx.fillText('19:32',px+10,py+13);
+  ctx.fillStyle='rgba(200,200,220,.35)';ctx.font=sf(12)+'px sans-serif';ctx.textAlign='left';ctx.fillText('19:32',px+10,py+13);
   // 导航栏
   ctx.fillStyle='rgba(25,25,40,.95)';ctx.fillRect(px,py+18,pw,28);
-  ctx.fillStyle='rgba(220,220,240,.8)';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText('我们五个人🏔️',px+pw/2,py+36);
+  ctx.fillStyle='rgba(220,220,240,.8)';ctx.font='bold '+sf(14)+'px sans-serif';ctx.textAlign='center';ctx.fillText('我们五个人🏔️',px+pw/2,py+36);
   ctx.strokeStyle='rgba(80,80,120,.3)';ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(px,py+46);ctx.lineTo(px+pw,py+46);ctx.stroke();
   // 消息
   ctx.save();ctx.beginPath();ctx.rect(px,py+48,pw,ph-80);ctx.clip();
@@ -608,17 +636,17 @@ function renderSummer(ctx,W,H,t,p){
     var isR=m.who==='she';
     var avC=m.who==='he'?'#4a6ab5':m.who==='she'?'#d4587a':'#606880';
     var bubC=isR?'#3d7a4a':m.who==='he'?'#2a3a5a':'#2a2a40';
-    ctx.globalAlpha=alpha;ctx.font='10px sans-serif';var tw2=ctx.measureText(m.text).width;var bw2=Math.min(tw2+16,pw-50),bh2=22;
+    ctx.globalAlpha=alpha;ctx.font=sf(13)+'px sans-serif';var tw2=ctx.measureText(m.text).width;var bw2=Math.min(tw2+16,pw-50),bh2=22;
     if(isR){
       roundRect(ctx,px+pw-14,cy+1,12,12,3);ctx.fillStyle=avC;ctx.fill();
-      ctx.fillStyle='#fff';ctx.font='7px sans-serif';ctx.textAlign='center';ctx.fillText('她',px+pw-8,cy+10);
+      ctx.fillStyle='#fff';ctx.font=sf(10)+'px sans-serif';ctx.textAlign='center';ctx.fillText('她',px+pw-8,cy+10);
       roundRect(ctx,px+pw-18-bw2,cy,bw2,bh2,6);ctx.fillStyle=bubC;ctx.fill();
-      ctx.fillStyle='rgba(255,255,255,.88)';ctx.font='10px sans-serif';ctx.textAlign='left';ctx.fillText(m.text,px+pw-14-bw2,cy+15);
+      ctx.fillStyle='rgba(255,255,255,.88)';ctx.font=sf(13)+'px sans-serif';ctx.textAlign='left';ctx.fillText(m.text,px+pw-14-bw2,cy+15);
     }else{
       roundRect(ctx,px+6,cy+1,12,12,3);ctx.fillStyle=avC;ctx.fill();
-      ctx.fillStyle='#fff';ctx.font='7px sans-serif';ctx.textAlign='center';ctx.fillText(m.who==='he'?'他':'友',px+12,cy+10);
+      ctx.fillStyle='#fff';ctx.font=sf(10)+'px sans-serif';ctx.textAlign='center';ctx.fillText(m.who==='he'?'他':'友',px+12,cy+10);
       roundRect(ctx,px+22,cy,bw2,bh2,6);ctx.fillStyle=bubC;ctx.fill();
-      ctx.fillStyle='rgba(255,255,255,.88)';ctx.font='10px sans-serif';ctx.textAlign='left';ctx.fillText(m.text,px+28,cy+15);
+      ctx.fillStyle='rgba(255,255,255,.88)';ctx.font=sf(13)+'px sans-serif';ctx.textAlign='left';ctx.fillText(m.text,px+28,cy+15);
     }
     ctx.globalAlpha=1;cy+=bh2+8;
   }
@@ -671,7 +699,7 @@ function renderTyping(ctx,W,H,t,p){
   var mpx=-W*.18,mpy=-H*.28,mpw=W*.36,mph=H*.5;
   roundRect(ctx,mpx-2,mpy-2,mpw+4,mph+4,12);ctx.fillStyle='#1a1a2a';ctx.fill();
   roundRect(ctx,mpx,mpy,mpw,mph,10);ctx.fillStyle='#080812';ctx.fill();
-  ctx.fillStyle='rgba(100,140,255,.5)';ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText('他',mpx+mpw/2,mpy+14);
+  ctx.fillStyle='rgba(100,140,255,.5)';ctx.font='bold '+sf(12)+'px sans-serif';ctx.textAlign='center';ctx.fillText('他',mpx+mpw/2,mpy+14);
   // 打字动画
   var cycle=t%8;var draftIdx=cycle<3.5?0:cycle<6.5?1:2;var draft=drafts[draftIdx];
   var localCycle=cycle<3.5?cycle:cycle<6.5?cycle-3.5:cycle-6.5;
@@ -684,18 +712,18 @@ function renderTyping(ctx,W,H,t,p){
   roundRect(ctx,mpx+4,ibY,mpw-8,16,5);ctx.fillStyle='rgba(30,30,50,.9)';ctx.fill();
   if(isDel){ctx.fillStyle='rgba(255,80,80,'+(0.1+Math.sin(t*8)*.08)+')';roundRect(ctx,mpx+4,ibY,mpw-8,16,5);ctx.fill();}
   var display=curText.length>14?curText.substring(curText.length-14):curText;
-  ctx.fillStyle='rgba(200,210,240,.8)';ctx.font='8px sans-serif';ctx.textAlign='left';ctx.fillText(display,mpx+8,ibY+11);
+  ctx.fillStyle='rgba(200,210,240,.8)';ctx.font=sf(11)+'px sans-serif';ctx.textAlign='left';ctx.fillText(display,mpx+8,ibY+11);
   if(Math.sin(t*5)>0){var twm=ctx.measureText(display).width;ctx.fillStyle='rgba(200,210,240,.5)';ctx.fillRect(mpx+9+twm,ibY+3,1,10);}
   // 发送后
   if(isLast&&localCycle>1.2){
     var sa=Math.min(1,(localCycle-1.2)*2);ctx.globalAlpha=sa;
-    var msgT='加油！';ctx.font='8px sans-serif';var tw3=ctx.measureText(msgT).width;
+    var msgT='加油！';ctx.font=sf(11)+'px sans-serif';var tw3=ctx.measureText(msgT).width;
     roundRect(ctx,mpx+mpw-6-tw3-10,mpy+30,tw3+10,16,5);ctx.fillStyle='rgba(80,180,100,.85)';ctx.fill();
     ctx.fillStyle='#fff';ctx.textAlign='right';ctx.fillText(msgT,mpx+mpw-11,mpy+41);ctx.globalAlpha=1;
   }
   ctx.restore();
   // 时钟
-  ctx.fillStyle='rgba(140,150,190,.2)';ctx.font='10px sans-serif';ctx.textAlign='right';ctx.fillText('23:47',W*.95,H*.63);
+  ctx.fillStyle='rgba(140,150,190,.2)';ctx.font=sf(13)+'px sans-serif';ctx.textAlign='right';ctx.fillText('23:47',W*.95,H*.63);
 }
 
 /* ----- 等待 ----- */
@@ -708,16 +736,16 @@ function renderWaiting(ctx,W,H,t,p){
   roundRect(ctx,px-3,py-3,pw+6,ph+6,14);ctx.fillStyle='#1e1e2e';ctx.fill();
   roundRect(ctx,px,py,pw,ph,11);ctx.fillStyle='#0a0a14';ctx.fill();
   // 她发的消息
-  ctx.font='10px sans-serif';var mtxt='加油！';var mtw=ctx.measureText(mtxt).width;
+  ctx.font=sf(13)+'px sans-serif';var mtxt='加油！';var mtw=ctx.measureText(mtxt).width;
   roundRect(ctx,px+pw-10-mtw-12,py+30,mtw+12,20,6);ctx.fillStyle='rgba(80,180,100,.8)';ctx.fill();
   ctx.fillStyle='#fff';ctx.textAlign='right';ctx.fillText(mtxt,px+pw-16,py+43);
-  ctx.fillStyle='rgba(140,150,190,.3)';ctx.font='7px sans-serif';ctx.textAlign='right';ctx.fillText('已读',px+pw-10,py+58);
+  ctx.fillStyle='rgba(140,150,190,.3)';ctx.font=sf(10)+'px sans-serif';ctx.textAlign='right';ctx.fillText('已读',px+pw-10,py+58);
   // 等待中
   if(t<7){for(var i=0;i<3;i++){var dy=Math.sin(t*3+i*.9)*4;ctx.fillStyle='rgba(150,160,200,'+(0.2+Math.sin(t*2+i)*.1)+')';ctx.beginPath();ctx.arc(px+pw/2-8+i*8,py+ph/2+dy,3,0,6.28);ctx.fill();}
-    if(Math.sin(t*.5)>.7){ctx.fillStyle='rgba(150,160,200,.18)';ctx.font='8px sans-serif';ctx.textAlign='center';ctx.fillText('对方正在输入...',px+pw/2,py+ph/2+20);}
+    if(Math.sin(t*.5)>.7){ctx.fillStyle='rgba(150,160,200,.18)';ctx.font=sf(11)+'px sans-serif';ctx.textAlign='center';ctx.fillText('对方正在输入...',px+pw/2,py+ph/2+20);}
   }else{
     var ra=Math.min(1,(t-7)*1.5);ctx.globalAlpha=ra;
-    var reply='谢谢 我会努力的';ctx.font='10px sans-serif';var rw=ctx.measureText(reply).width;
+    var reply='谢谢 我会努力的';ctx.font=sf(13)+'px sans-serif';var rw=ctx.measureText(reply).width;
     roundRect(ctx,px+10,py+80,rw+12,20,6);ctx.fillStyle='rgba(50,60,90,.85)';ctx.fill();
     ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(reply,px+16,py+93);ctx.globalAlpha=1;
     // 小光芒
@@ -733,11 +761,11 @@ function renderReunion(ctx,W,H,t,p){
   // left campus
   ctx.fillStyle='#3a3858';ctx.fillRect(W*.02,gY-60,W*.22,60);ctx.fillRect(W*.08,gY-78,W*.12,18);
   for(var r=0;r<2;r++)for(var c=0;c<3;c++){ctx.fillStyle='rgba(255,210,120,'+(0.4+Math.sin(t*1.2+r+c)*.15)+')';ctx.fillRect(W*.04+c*W*.06,gY-52+r*24,6,10);}
-  ctx.fillStyle='rgba(180,190,220,.55)';ctx.font='8px sans-serif';ctx.textAlign='center';ctx.fillText('她的大学',W*.15,gY-82);
+  ctx.fillStyle='rgba(180,190,220,.55)';ctx.font=sf(11)+'px sans-serif';ctx.textAlign='center';ctx.fillText('她的大学',W*.15,gY-82);
   // right campus
   ctx.fillStyle='#3a3858';ctx.fillRect(W*.76,gY-60,W*.22,60);ctx.fillRect(W*.8,gY-78,W*.12,18);
   for(var r=0;r<2;r++)for(var c=0;c<3;c++){ctx.fillStyle='rgba(255,210,120,'+(0.4+Math.sin(t*1.5+r+c+2)*.15)+')';ctx.fillRect(W*.78+c*W*.06,gY-52+r*24,6,10);}
-  ctx.fillStyle='rgba(180,190,220,.55)';ctx.font='8px sans-serif';ctx.fillText('他的大学',W*.87,gY-82);
+  ctx.fillStyle='rgba(180,190,220,.55)';ctx.font=sf(11)+'px sans-serif';ctx.fillText('他的大学',W*.87,gY-82);
   // ground
   ctx.fillStyle='#2a2840';ctx.fillRect(0,gY,W,H*.38);
   // 人物
@@ -748,7 +776,7 @@ function renderReunion(ctx,W,H,t,p){
   // 脉搏光点
   var pulseX=W*.5+Math.sin(t*.6)*W*.15;ctx.beginPath();ctx.arc(pulseX,gY-14,3,0,6.28);ctx.fillStyle='rgba(255,180,200,'+(0.12+Math.sin(t*2)*.08)+')';ctx.fill();
   // 文字
-  if(t>3){var ta=Math.min(1,(t-3)*.5);ctx.fillStyle='rgba(180,190,220,'+ta*.5+')';ctx.font='italic 11px sans-serif';ctx.textAlign='center';ctx.fillText('好像差了那么一点点',W*.5,gY+H*.2);}
+  if(t>3){var ta=Math.min(1,(t-3)*.5);ctx.fillStyle='rgba(180,190,220,'+ta*.5+')';ctx.font='italic '+sf(14)+'px sans-serif';ctx.textAlign='center';ctx.fillText('好像差了那么一点点',W*.5,gY+H*.2);}
 }
 
 /* ----- 结尾 ----- */
