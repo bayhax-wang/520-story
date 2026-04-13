@@ -33,6 +33,7 @@ var parts=[], obs=[], items=[], plats=[], stars=[], fwP=[];
 var finPhase=0, finTimer=0;
 var scTxtAlpha=0, scTxtStr='';
 var endConfetti=[];
+var scTrans={active:false,phase:'out',alpha:0,nextIdx:-1,timer:0};
 
 /* Audio */
 var ac=null;
@@ -586,6 +587,16 @@ function showEnd(){
 function loop(){
   if(!running)return;
   fN++;
+  /* During scene transition, only draw + animate transition overlay */
+  if(scTrans.active){
+    var sc=SCENES[sIdx];
+    if(sc){
+      drBg(sc);drStars();drGnd(sc);drPlats();drObs();drItems();
+      drChar(remoteC);drChar(localC);drParts();
+    }
+    drSceneTrans();
+    requestAnimationFrame(loop);return;
+  }
   var sc=SCENES[sIdx];if(!sc){showEnd();return;}
 
   // Finale scene logic
@@ -632,21 +643,13 @@ function loop(){
     // Track distance via local char
     sDist=localC.x-100; // started at x=100
 
-    // Check scene completion
-    if(sDist>=sc.dist){
-      sIdx++;
-      if(sIdx<SCENES.length){
+    // Check scene completion → trigger transition
+    if(sDist>=sc.dist && !scTrans.active){
+      var ni=sIdx+1;
+      if(ni<SCENES.length){
+        scTrans={active:true,phase:'out',alpha:0,nextIdx:ni,timer:0};
         snd('scene');
-        var nsc=SCENES[sIdx];
-        showScTxt(nsc.name+' — '+nsc.desc);
-        txSend({type:'scene',idx:sIdx});
-        // Reset positions for new scene
-        var baseX=localC.x;
-        localC.x=100;localC.y=gY-CH;localC.vy=0;localC.onG=true;localC.jmp=0;
-        remoteC.x=170;remoteC.y=gY-CH;remoteC.vy=0;remoteC.onG=true;remoteC.jmp=0;
-        remoteC.tx=170;remoteC.ty=gY-CH;
-        camX=0;sDist=0;
-        genLvl();mkStars();
+        txSend({type:'scene',idx:ni});
       } else {
         showEnd();return;
       }
@@ -685,8 +688,58 @@ function loop(){
   drParts();
   drFinale();
   drScTxt();
+  drSceneTrans();
 
   requestAnimationFrame(loop);
+}
+
+/* Scene transition: fade-out → show title card → fade-in */
+function drSceneTrans(){
+  var t=scTrans;
+  if(!t.active)return;
+  var spd=0.025; /* fade speed */
+  if(t.phase==='out'){
+    t.alpha=Math.min(1,t.alpha+spd);
+    if(t.alpha>=1){
+      /* Switch scene at full black */
+      sIdx=t.nextIdx;
+      var nsc=SCENES[sIdx];
+      localC.x=100;localC.y=gY-CH;localC.vy=0;localC.onG=true;localC.jmp=0;
+      remoteC.x=170;remoteC.y=gY-CH;remoteC.vy=0;remoteC.onG=true;remoteC.jmp=0;
+      remoteC.tx=170;remoteC.ty=gY-CH;
+      camX=0;sDist=0;
+      genLvl();mkStars();
+      t.phase='card';t.timer=90;/* ~1.5s title card */
+    }
+  } else if(t.phase==='card'){
+    t.alpha=1;
+    t.timer--;
+    if(t.timer<=0)t.phase='in';
+  } else if(t.phase==='in'){
+    t.alpha=Math.max(0,t.alpha-spd);
+    if(t.alpha<=0){t.active=false;}
+  }
+  /* Draw overlay */
+  ctx.save();
+  ctx.globalAlpha=t.alpha;
+  ctx.fillStyle='#0a0a1a';
+  ctx.fillRect(0,0,W,H);
+  /* Title card */
+  if(t.phase==='card'||t.phase==='in'){
+    var sc=SCENES[sIdx];
+    if(sc){
+      ctx.globalAlpha=t.phase==='card'?1:t.alpha*2;
+      ctx.fillStyle='#fff';
+      ctx.font='bold 32px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(sc.name,W/2,H/2-20);
+      ctx.font='18px sans-serif';ctx.globalAlpha*=0.7;
+      ctx.fillText(sc.desc,W/2,H/2+20);
+      /* Scene number */
+      ctx.font='14px sans-serif';ctx.globalAlpha*=0.6;
+      ctx.fillText((sIdx+1)+' / '+SCENES.length,W/2,H/2+55);
+    }
+  }
+  ctx.restore();
 }
 
 })();
