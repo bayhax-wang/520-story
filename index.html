@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <div id="start-screen">
   <div class="start-content">
     <div class="start-title">我们的故事</div>
@@ -15,30 +14,12 @@
     <div class="start-arrow">▶</div>
   </div>
 </div>
-
-<div id="player" style="display:none">
-  <div id="scene-container"></div>
-  <div id="bubble-layer"></div>
-  <div id="caption-layer"></div>
-  <div id="overlay"></div>
-  <div id="controls">
-    <div id="progress-bar"><div id="progress-fill"></div></div>
-    <div id="scene-title"></div>
-  </div>
-  <div id="pause-icon">❚❚</div>
+<canvas id="main-canvas" style="display:none"></canvas>
+<div id="controls" style="display:none">
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+  <div id="scene-title"></div>
 </div>
-
-<!-- Preload images -->
-<div id="preloader" style="display:none">
-  <img src="images/01-primary.jpg" alt="">
-  <img src="images/02-high.jpg" alt="">
-  <img src="images/03-mountain.jpg" alt="">
-  <img src="images/04-parting.jpg" alt="">
-  <img src="images/05-confession.jpg" alt="">
-  <img src="images/06-proposal.jpg" alt="">
-  <img src="images/07-seaside-real.jpg" alt="">
-</div>
-
+<div id="pause-icon">❚❚</div>
 <script src="app.js"></script>
 </body>
 </html>
