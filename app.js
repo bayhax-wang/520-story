@@ -795,4 +795,101 @@ window.addEventListener('resize',function(){
   fPixelate.uniforms.uRes=[W()||800,H()||600];
 });
 
+// ═══════ PROGRAMMER EASTER EGG ═══════
+
+// Console love letter (he WILL open devtools)
+(function(){
+  var s='color:#ff6b9d;font-size:14px;font-weight:bold;text-shadow:0 0 5px rgba(255,107,157,0.5)';
+  var s2='color:#ff9cc2;font-size:12px';
+  var s3='color:#888;font-size:11px;font-style:italic';
+  console.log('%c\n'+
+    '    ♥♥♥       ♥♥♥\n'+
+    '  ♥♥♥♥♥♥   ♥♥♥♥♥♥\n'+
+    '♥♥♥♥♥♥♥♥ ♥♥♥♥♥♥♥♥\n'+
+    ' ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥\n'+
+    '  ♥♥♥♥♥♥♥♥♥♥♥♥♥\n'+
+    '    ♥♥♥♥♥♥♥♥♥\n'+
+    '      ♥♥♥♥♥\n'+
+    '        ♥\n', s);
+  console.log('%c// written for you, line by line', s3);
+  console.log('%c\n'+
+    'class Love {\n'+
+    '  constructor() {\n'+
+    '    this.�ersonA = "如月";\n'+
+    '    this.personB = "粮哥";\n'+
+    '    this.since = new Date("2023-11-09");\n'+
+    '    this.status = "married"; // 💍\n'+
+    '  }\n'+
+    '\n'+
+    '  getDaysTogether() {\n'+
+    '    return Math.floor((Date.now() - this.since) / 86400000);\n'+
+    '  }\n'+
+    '\n'+
+    '  async forever() {\n'+
+    '    while (true) {\n'+
+    '      await this.nextDay();\n'+
+    '      this.love++;\n'+
+    '      // no break;\n'+
+    '      // no return;\n'+
+    '      // no exit;\n'+
+    '    }\n'+
+    '  }\n'+
+    '}\n'+
+    '\n'+
+    'const us = new Love();\n'+
+    'us.forever(); // since 2023.11.09\n', s2);
+  var d=Math.floor((Date.now()-new Date('2023-11-09').getTime())/86400000);
+  console.log('%c// 在一起第 '+d+' 天 ❤️', s);
+  console.log('%c// 520 快乐，粮哥', s);
+  console.log('%c\n// P.S. 如果你在看这段代码\n// 说明你果然是个程序员\n// 这整个项目都是为你写的\n// WebGL + GLSL + PixiJS\n// 就像我们的故事\n// 每一帧都不想跳过 ❤️\n', s3);
+})();
+
+// Hidden: tap ending 5 times for secret
+var _eTaps=0,_eTimer=null;
+function _eggCheck(){
+  _eTaps++;
+  clearTimeout(_eTimer);
+  _eTimer=setTimeout(function(){_eTaps=0;},2000);
+  if(_eTaps>=5){
+    _eTaps=0;
+    var d=Math.floor((Date.now()-new Date('2023-11-09').getTime())/86400000);
+    var ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.92);opacity:0;transition:opacity 0.8s;cursor:pointer';
+    ov.innerHTML='<div style="text-align:center;font-family:monospace;color:#ff9cc2;padding:20px">'+
+      '<pre style="font-size:clamp(10px,2.5vw,16px);line-height:1.6;color:#ffb3d0">'+
+      'class OurStory {\n'+
+      '  started = "小学";\n'+
+      '  plot_twist = "毕业徒步";\n'+
+      '  confession = "河套护栏";\n'+
+      '  proposal = "乌兰察布烟花";\n'+
+      '  married = "2023.11.09";\n'+
+      '  days = '+d+';\n'+
+      '\n'+
+      '  while (true) {\n'+
+      '    �ove(粮哥);\n'+
+      '    // no break\n'+
+      '    // no exit\n'+
+      '    // just us\n'+
+      '  }\n'+
+      '}\n'+
+      '</pre>'+
+      '<p style="margin-top:24px;font-size:clamp(14px,4vw,22px);color:#fff">520 快乐 ❤️</p>'+
+      '<p style="margin-top:8px;font-size:12px;color:#666">// 点击关闭</p>'+
+      '</div>';
+    document.body.appendChild(ov);
+    setTimeout(function(){ov.style.opacity='1';},50);
+    ov.addEventListener('click',function(){ov.style.opacity='0';setTimeout(function(){ov.remove();},800);});
+  }
+}
+// Hook into ending scene - listen when last scene is playing
+var _origGoScene=goScene;
+goScene=function(idx){
+  _origGoScene(idx);
+  if(idx===SCENES.length-1){
+    pixi.view.removeEventListener('click',_eggTap);
+    pixi.view.addEventListener('click',_eggTap);
+  }
+};
+function _eggTap(){if(curIdx===SCENES.length-1&&paused) _eggCheck();}
+
 })();
