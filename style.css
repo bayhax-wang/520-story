@@ -34,6 +34,15 @@ body{background:#0a0a1a;color:#e0e0e0;font-family:'PingFang SC','Hiragino Sans G
 .chapter-end.visible{opacity:1}
 .chapter-end .next-hint{font-size:.9rem;color:rgba(150,160,200,.5);letter-spacing:.1em}
 
+/* 照片占位 */
+.photo-frame{max-width:420px;margin:0 auto 4rem;opacity:0;transform:translateY(30px);transition:all .9s ease}
+.photo-frame.visible{opacity:1;transform:translateY(0)}
+.photo-placeholder{border:1px dashed rgba(140,160,255,.25);border-radius:16px;padding:2.5rem 1.5rem;text-align:center;background:rgba(15,15,35,.4)}
+.photo-placeholder .photo-icon{font-size:2rem;margin-bottom:.8rem}
+.photo-placeholder .photo-hint{font-size:.95rem;color:rgba(200,210,240,.7);margin-bottom:.4rem}
+.photo-placeholder .photo-sub{font-size:.8rem;color:rgba(150,160,200,.4)}
+.photo-placeholder img{max-width:100%;border-radius:10px}
+
 .shooting-star{position:fixed;width:100px;height:1px;background:linear-gradient(to right,rgba(180,200,255,.7),transparent);z-index:0;pointer-events:none;opacity:0}
 
 @media(max-width:480px){

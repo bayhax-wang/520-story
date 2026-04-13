@@ -191,7 +191,7 @@ var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isInte
 document.querySelectorAll('[data-reveal]').forEach(function(el){obs.observe(el);});
 
 var started={};
-function startScene(n){if(started[n])return;started[n]=true;var fn={primary:scenePrimary,middle:sceneMiddle,high:sceneHigh,mountain:sceneMountain};fn[n]();}
+function startScene(n){if(started[n])return;started[n]=true;var fn={primary:scenePrimary,middle:sceneMiddle,high:sceneHigh,mountain:sceneMountain,summer:sceneSummer,parting:sceneParting,typing:sceneTyping,waiting:sceneWaiting,reunion:sceneReunion};if(fn[n])fn[n]();}
 
 /* ===== 小学：月夜教室 ===== */
 function scenePrimary(){
@@ -332,6 +332,305 @@ function sceneMountain(){
         ctx.beginPath();ctx.arc(px,py,1.2,0,6.28);
         ctx.fillStyle='rgba(255,210,140,'+a3*.7+')';ctx.fill();
       }
+    }
+    requestAnimationFrame(draw);
+  })();
+}
+
+/* ===== 第二章场景 ===== */
+
+/* 暑假群聊：手机上消息气泡不断冒出 */
+function sceneSummer(){
+  var o=initCanvas('cv-summer'),ctx=o.ctx,W=o.W,H=o.H,t=0;
+  var msgs=[
+    {who:'she',text:'今天爬山好开心啊！'},
+    {who:'he',text:'哈哈下次还去'},
+    {who:'other',text:'同意+1'},
+    {who:'she',text:'你们暑假什么安排'},
+    {who:'he',text:'在家呢 无聊'},
+    {who:'she',text:'我也是😂'},
+    {who:'other',text:'组队打游戏呀'},
+    {who:'he',text:'走起'},
+    {who:'she',text:'晚上聊天呀'},
+    {who:'he',text:'好啊'}
+  ];
+  var bubbles=[],nextMsg=0,lastSpawn=0;
+  (function draw(){
+    ctx.clearRect(0,0,W,H);t+=.02;
+    // 背景
+    var g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0e1028');g.addColorStop(1,'#181838');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    // 手机框
+    var px=W*.2,py=H*.08,pw=W*.6,ph=H*.84;
+    roundRect(ctx,px-3,py-3,pw+6,ph+6,16);
+    ctx.fillStyle='rgba(50,50,70,.9)';ctx.fill();
+    roundRect(ctx,px,py,pw,ph,13);
+    ctx.fillStyle='rgba(20,20,40,.95)';ctx.fill();
+    // 屏幕顶部标题
+    ctx.fillStyle='rgba(140,160,255,.6)';ctx.font='bold 10px sans-serif';ctx.textAlign='center';
+    ctx.fillText('我们五个人的群',W*.5,py+16);
+    ctx.strokeStyle='rgba(100,120,200,.15)';ctx.lineWidth=.5;
+    ctx.beginPath();ctx.moveTo(px+8,py+22);ctx.lineTo(px+pw-8,py+22);ctx.stroke();
+    // 生成气泡
+    if(t-lastSpawn>.8&&nextMsg<msgs.length){lastSpawn=t;var m=msgs[nextMsg++];
+      bubbles.push({text:m.text,who:m.who,y:py+ph-20,targetY:py+30+bubbles.length*28,alpha:0});}
+    // 气泡上浮
+    for(var i=0;i<bubbles.length;i++){
+      var bb=bubbles[i];
+      bb.y+=(bb.targetY-bb.y)*.08;
+      bb.alpha=Math.min(1,bb.alpha+.05);
+      // 老气泡上移
+      if(bubbles.length>8)bb.targetY-=(bubbles.length-8)*3;
+      var bx=bb.who==='he'?px+pw-12:bb.who==='she'?px+12:px+pw*.35;
+      var align=bb.who==='he'?'right':bb.who==='she'?'left':'left';
+      var color=bb.who==='he'?'rgba(70,100,180,.85)':bb.who==='she'?'rgba(180,80,120,.85)':'rgba(80,80,110,.85)';
+      ctx.globalAlpha=bb.alpha*(bb.y<py+25?.3:1);
+      ctx.font='9px sans-serif';var tw=ctx.measureText(bb.text).width;
+      var bw=tw+14,bh=18;
+      var rx=align==='right'?bx-bw:bx;
+      roundRect(ctx,rx,bb.y-bh/2,bw,bh,8);
+      ctx.fillStyle=color;ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,.9)';ctx.textAlign=align==='right'?'right':'left';
+      ctx.fillText(bb.text,align==='right'?bx-7:bx+7,bb.y+3.5);
+      ctx.globalAlpha=1;
+    }
+    // 循环
+    if(nextMsg>=msgs.length&&t-lastSpawn>3){nextMsg=0;bubbles=[];lastSpawn=t;}
+    requestAnimationFrame(draw);
+  })();
+}
+
+/* 分别：两个人向不同方向走 */
+function sceneParting(){
+  var o=initCanvas('cv-parting'),ctx=o.ctx,W=o.W,H=o.H,t=0;
+  (function draw(){
+    ctx.clearRect(0,0,W,H);t+=.012;
+    // 秋天背景
+    var g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#141028');g.addColorStop(.5,'#1e1838');g.addColorStop(1,'#22203a');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    var gY=H*.72;
+    // 路
+    ctx.fillStyle='rgba(45,42,65,.7)';ctx.fillRect(0,gY,W,H*.3);
+    ctx.setLineDash([6,6]);ctx.strokeStyle='rgba(100,100,140,.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,gY+10);ctx.lineTo(W,gY+10);ctx.stroke();ctx.setLineDash([]);
+    // 两个方向箭头
+    var spread=Math.min(t*8,W*.35);
+    // 她向左走（去大学）
+    drawGirl(ctx,W*.5-spread,gY+6,t,true);
+    // 他向右留（复读）
+    drawBoy(ctx,W*.5+spread,gY+6,t,true);
+    // 中间连线淡去
+    var lineA=Math.max(0,1-t*.1);
+    ctx.setLineDash([3,5]);ctx.strokeStyle='rgba(180,170,220,'+lineA*.3+')';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(W*.5-spread+5,gY-12);ctx.lineTo(W*.5+spread-5,gY-12);ctx.stroke();ctx.setLineDash([]);
+    // 标签
+    if(spread>W*.15){
+      var la=Math.min(1,(spread-W*.15)/(W*.1));
+      ctx.globalAlpha=la*.6;
+      ctx.fillStyle='rgba(200,180,230,.8)';ctx.font='9px sans-serif';ctx.textAlign='center';
+      ctx.fillText('← 大学',W*.5-spread,gY-25);
+      ctx.fillText('复读 →',W*.5+spread,gY-25);
+      ctx.globalAlpha=1;
+    }
+    // 落叶
+    for(var i=0;i<5;i++){
+      var lx=(W*.1+i*W*.22+t*15)%W;
+      var ly=H*.2+Math.sin(t+i*2)*H*.15+i*15;
+      ctx.save();ctx.translate(lx,ly);ctx.rotate(t+i);
+      ctx.fillStyle='rgba(180,130,80,'+(0.2+Math.sin(t+i)*.1)+')';
+      ctx.beginPath();ctx.ellipse(0,0,4,2,0,0,6.28);ctx.fill();
+      ctx.restore();
+    }
+    requestAnimationFrame(draw);
+  })();
+}
+
+/* 反复措辞：手机屏幕打字→删除→打字→发送 */
+function sceneTyping(){
+  var o=initCanvas('cv-typing'),ctx=o.ctx,W=o.W,H=o.H,t=0;
+  var drafts=[
+    '加油啊，复读辛苦了，我会一直支持你的',
+    '最近还好吗？别太累了',
+    '加油！'
+  ];
+  var phase=0,charIdx=0,curText='',deleting=false,pauseT=0,sent=false;
+  (function draw(){
+    ctx.clearRect(0,0,W,H);t+=.025;
+    // 背景
+    ctx.fillStyle='#10102a';ctx.fillRect(0,0,W,H);
+    // 手机
+    var px=W*.18,py=H*.06,pw=W*.64,ph=H*.88;
+    roundRect(ctx,px-3,py-3,pw+6,ph+6,16);ctx.fillStyle='rgba(50,50,70,.9)';ctx.fill();
+    roundRect(ctx,px,py,pw,ph,13);ctx.fillStyle='rgba(20,20,40,.95)';ctx.fill();
+    // 聊天对象名
+    ctx.fillStyle='rgba(100,140,255,.7)';ctx.font='bold 10px sans-serif';ctx.textAlign='center';
+    ctx.fillText('他',W*.5,py+16);
+    ctx.strokeStyle='rgba(100,120,200,.15)';ctx.lineWidth=.5;
+    ctx.beginPath();ctx.moveTo(px+8,py+22);ctx.lineTo(px+pw-8,py+22);ctx.stroke();
+    // 输入框
+    var ibY=py+ph-36,ibH=26;
+    roundRect(ctx,px+8,ibY,pw-16,ibH,10);
+    ctx.fillStyle='rgba(35,35,60,.9)';ctx.fill();
+    ctx.strokeStyle='rgba(100,120,200,.2)';ctx.lineWidth=.5;ctx.stroke();
+    // 打字动画逻辑
+    if(phase<2){
+      // 打字阶段
+      var draft=drafts[phase];
+      if(!deleting){
+        if(pauseT>0){pauseT-=.025;}
+        else if(charIdx<draft.length){if(Math.floor(t*8)%2===0&&charIdx<draft.length)charIdx++;curText=draft.substring(0,charIdx);}
+        else{pauseT=1.2;deleting=true;}
+      }else{
+        if(pauseT>0){pauseT-=.025;}
+        else if(charIdx>0){if(Math.floor(t*12)%2===0)charIdx--;curText=draft.substring(0,charIdx);}
+        else{phase++;charIdx=0;deleting=false;pauseT=.8;}
+      }
+    }else if(phase===2){
+      // 最后一条，打完发送
+      var draft=drafts[2];
+      if(charIdx<draft.length){if(Math.floor(t*6)%2===0)charIdx++;curText=draft.substring(0,charIdx);}
+      else if(!sent){pauseT+=.025;if(pauseT>1.5)sent=true;}
+    }
+    // 显示输入框文字
+    if(!sent){
+      ctx.fillStyle='rgba(200,210,240,.8)';ctx.font='10px sans-serif';ctx.textAlign='left';
+      ctx.fillText(curText,px+15,ibY+16);
+      // 光标闪烁
+      if(Math.sin(t*5)>0){var tw2=ctx.measureText(curText).width;
+        ctx.fillStyle='rgba(200,210,240,.7)';ctx.fillRect(px+16+tw2,ibY+7,1.5,13);}
+      // “删除中”提示
+      if(deleting){ctx.fillStyle='rgba(255,100,100,.4)';ctx.font='8px sans-serif';ctx.textAlign='center';
+        ctx.fillText('× 删除',W*.5,ibY-8);}
+    }else{
+      // 已发送—气泡出现在聊天区
+      var sendA=Math.min(1,(pauseT-1.5)*3);
+      ctx.globalAlpha=sendA;
+      var msgW=ctx.measureText(drafts[2]).width+14;
+      roundRect(ctx,px+pw-12-msgW,py+50,msgW,20,8);
+      ctx.fillStyle='rgba(180,80,120,.85)';ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='10px sans-serif';ctx.textAlign='right';
+      ctx.fillText(drafts[2],px+pw-19,py+63);
+      ctx.globalAlpha=1;
+      // 小绿点（已发送）
+      ctx.fillStyle='rgba(100,220,120,.7)';ctx.beginPath();ctx.arc(px+pw-12-msgW-6,py+60,2.5,0,6.28);ctx.fill();
+      // 心跳动画
+      var hb=Math.sin(t*6)*2;
+      ctx.fillStyle='rgba(255,140,180,'+(0.3+Math.sin(t*4)*.2)+')';ctx.font=(12+hb)+'px sans-serif';ctx.textAlign='center';
+      ctx.fillText('❤',W*.5,py+ph*.5+10);
+      pauseT+=.025;
+      // 循环
+      if(pauseT>5){phase=0;charIdx=0;curText='';deleting=false;pauseT=0;sent=false;}
+    }
+    requestAnimationFrame(draw);
+  })();
+}
+
+/* 等待回复：消息已发出，漫长等待，偶尔亮起 */
+function sceneWaiting(){
+  var o=initCanvas('cv-waiting'),ctx=o.ctx,W=o.W,H=o.H,t=0;
+  var replied=false,replyT=0;
+  (function draw(){
+    ctx.clearRect(0,0,W,H);t+=.015;
+    // 背景
+    ctx.fillStyle='#0e0e24';ctx.fillRect(0,0,W,H);
+    // 手机
+    var px=W*.2,py=H*.08,pw=W*.6,ph=H*.84;
+    roundRect(ctx,px-3,py-3,pw+6,ph+6,16);ctx.fillStyle='rgba(50,50,70,.9)';ctx.fill();
+    roundRect(ctx,px,py,pw,ph,13);ctx.fillStyle='rgba(20,20,40,.95)';ctx.fill();
+    // 已发送的消息
+    var msgT='加油！';
+    ctx.font='10px sans-serif';var tw=ctx.measureText(msgT).width;
+    roundRect(ctx,px+pw-12-tw-14,py+40,tw+14,20,8);
+    ctx.fillStyle='rgba(180,80,120,.8)';ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.85)';ctx.textAlign='right';
+    ctx.fillText(msgT,px+pw-19,py+53);
+    // “已读”
+    ctx.fillStyle='rgba(140,150,190,.35)';ctx.font='8px sans-serif';ctx.textAlign='right';
+    ctx.fillText('已读',px+pw-12,py+68);
+    // 等待动画：三个点跳动
+    if(!replied){
+      for(var i=0;i<3;i++){
+        var dy=Math.sin(t*3+i*.8)*3;
+        ctx.fillStyle='rgba(150,160,200,'+(0.3+Math.sin(t*2+i)*.15)+')';
+        ctx.beginPath();ctx.arc(W*.5-8+i*8,H*.5+dy,2.5,0,6.28);ctx.fill();
+      }
+      // 时钟感
+      ctx.fillStyle='rgba(120,130,170,.25)';ctx.font='9px sans-serif';ctx.textAlign='center';
+      var mins=Math.floor(t*2)%60;
+      var hrs=Math.floor(mins/60);
+      ctx.fillText((mins<10?'0':'')+mins+' 分钟前',W*.5,H*.42);
+      if(t>6)replied=true;
+    }
+    // 回复出现
+    if(replied){
+      replyT+=.03;
+      var ra=Math.min(1,replyT);
+      ctx.globalAlpha=ra;
+      var replyMsg='谢谢 我会加油的';
+      ctx.font='10px sans-serif';var rw=ctx.measureText(replyMsg).width;
+      roundRect(ctx,px+12,py+85,rw+14,20,8);
+      ctx.fillStyle='rgba(70,100,180,.85)';ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,.85)';ctx.textAlign='left';
+      ctx.fillText(replyMsg,px+19,py+98);
+      ctx.globalAlpha=1;
+      // 小星星—开心
+      if(ra>=1){
+        for(var i=0;i<4;i++){
+          var sx=W*.3+Math.cos(replyT*1.5+i*1.57)*20;
+          var sy=py+92+Math.sin(replyT*1.5+i*1.57)*12;
+          ctx.fillStyle='rgba(255,210,140,'+(0.2+Math.sin(replyT*2+i)*.2)+')';
+          ctx.beginPath();ctx.arc(sx,sy,1.5,0,6.28);ctx.fill();
+        }
+      }
+      // 循环
+      if(replyT>5){replied=false;replyT=0;t=0;}
+    }
+    requestAnimationFrame(draw);
+  })();
+}
+
+/* 重逢：两个人在不同大学，但有连线 */
+function sceneReunion(){
+  var o=initCanvas('cv-reunion'),ctx=o.ctx,W=o.W,H=o.H,t=0;
+  (function draw(){
+    ctx.clearRect(0,0,W,H);t+=.012;
+    // 夜空
+    var g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0c0c28');g.addColorStop(1,'#181838');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    // 星星
+    for(var i=0;i<12;i++){
+      var sx=W*(.05+i*.085),sy=H*(.05+Math.sin(i*2.1)*.15);
+      ctx.fillStyle='rgba(200,210,255,'+(0.2+Math.sin(t+i)*.15)+')';
+      ctx.beginPath();ctx.arc(sx,sy,1,0,6.28);ctx.fill();
+    }
+    var gY=H*.7;
+    // 左侧大学
+    ctx.fillStyle='rgba(40,40,70,.8)';ctx.fillRect(W*.02,gY-50,W*.3,50);
+    ctx.fillStyle='rgba(255,220,150,'+(0.35+Math.sin(t*1.2)*.1)+')';ctx.fillRect(W*.08,gY-40,8,10);ctx.fillRect(W*.2,gY-40,8,10);
+    ctx.fillStyle='rgba(180,190,230,.5)';ctx.font='9px sans-serif';ctx.textAlign='center';ctx.fillText('她的大学',W*.17,gY-55);
+    // 右侧大学
+    ctx.fillStyle='rgba(40,40,70,.8)';ctx.fillRect(W*.68,gY-50,W*.3,50);
+    ctx.fillStyle='rgba(255,220,150,'+(0.35+Math.sin(t*1.5)*.1)+')';ctx.fillRect(W*.74,gY-40,8,10);ctx.fillRect(W*.86,gY-40,8,10);
+    ctx.fillStyle='rgba(180,190,230,.5)';ctx.fillText('他的大学',W*.83,gY-55);
+    // 地面
+    ctx.fillStyle='rgba(30,30,55,.7)';ctx.fillRect(0,gY,W,H*.3);
+    // 人物
+    drawGirl(ctx,W*.17,gY+6,t,false);
+    drawBoy(ctx,W*.83,gY+6,t,false);
+    // 两人之间的虚线连接（苾x弱的纽带）
+    var dashA=0.15+Math.sin(t)*.08;
+    ctx.setLineDash([4,6]);ctx.strokeStyle='rgba(200,180,255,'+dashA+')';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(W*.25,gY-10);ctx.lineTo(W*.75,gY-10);ctx.stroke();ctx.setLineDash([]);
+    // 中间文字
+    ctx.fillStyle='rgba(160,155,200,'+(0.25+Math.sin(t*.8)*.1)+')';ctx.font='9px sans-serif';ctx.textAlign='center';
+    ctx.fillText('差那么一点点',W*.5,gY-15);
+    // 小爱心粒子（若即若离）
+    for(var i=0;i<3;i++){
+      var hx=W*.35+i*W*.15+Math.sin(t*.7+i)*8;
+      var hy=gY-10+Math.cos(t+i*2)*5;
+      var ha=0.1+Math.sin(t*1.2+i)*.08;
+      ctx.fillStyle='rgba(255,150,180,'+ha+')';ctx.font='8px sans-serif';ctx.textAlign='center';
+      ctx.fillText('♥',hx,hy);
     }
     requestAnimationFrame(draw);
   })();
