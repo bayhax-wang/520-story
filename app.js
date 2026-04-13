@@ -882,14 +882,11 @@ function _eggCheck(){
   }
 }
 // Hook into ending scene - listen when last scene is playing
-var _origGoScene=goScene;
-goScene=function(idx){
-  _origGoScene(idx);
-  if(idx===SCENES.length-1){
-    pixi.view.removeEventListener('click',_eggTap);
-    pixi.view.addEventListener('click',_eggTap);
-  }
-};
-function _eggTap(){if(curIdx===SCENES.length-1&&paused) _eggCheck();}
+// Always listen for taps - egg only triggers on last scene
+pixi.view.addEventListener('click',_eggTap);
+pixi.view.addEventListener('touchstart',function(e){
+  if(curIdx===SCENES.length-1) _eggCheck();
+});
+function _eggTap(){if(curIdx===SCENES.length-1) _eggCheck();}
 
 })();
